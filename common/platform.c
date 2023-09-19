@@ -1,4 +1,5 @@
 #include "platform.h"
+#include "lib.h"
 #include <string.h>
 
 static uint8_t page_erased_bits[FLASH_SIZE / PAGE_SIZE] = {0};
@@ -90,7 +91,7 @@ int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz, bool er
 	{
 		FLASH->CR |= FLASH_CR_PG;
 
-		memcpy(&halfword, &src[i << 1U], 2);
+		_memcpy(&halfword, &src[i << 1U], 2);
 		*(__IO uint16_t *)(dest + (i << 1U)) = halfword;
 
 		sts = flash_wait_op();
@@ -114,7 +115,7 @@ int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz, bool er
 int platform_flash_read(uint32_t addr, uint8_t *src, uint32_t sz)
 {
 	if(addr < FLASH_START || addr + sz >= FLASH_FINISH) return 1;
-	memcpy(src, (void *)addr, sz);
+	_memcpy(src, (void *)addr, sz);
 	return 0;
 }
 
@@ -157,7 +158,7 @@ __attribute__((optimize("-O0"))) void platform_run_address(uint32_t address)
 
 void platform_get_uid(uint32_t *id)
 {
-	memcpy(id, (void *)UNIQUE_ID, 3 * sizeof(uint32_t));
+	_memcpy(id, (void *)UNIQUE_ID, 3 * sizeof(uint32_t));
 }
 
 void platform_watchdog_init(void)

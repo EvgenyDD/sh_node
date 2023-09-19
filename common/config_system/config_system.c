@@ -1,6 +1,7 @@
 #include "config_system.h"
 #include "crc.h"
 #include "platform.h"
+#include "lib.h"
 #include <string.h>
 
 __attribute__((weak)) void config_entry_not_found_callback(const uint8_t *key, uint32_t data_offset, uint16_t data_length) {}
@@ -164,7 +165,7 @@ config_sts_t config_write_storage(void)
 
 			const uint32_t entry_name_sz = strlen(entry_name) + 1 /* '\0' */;
 			uint16_t data_sz;
-			memcpy(&data_sz, &buf_old_data[offset_buf + entry_name_sz], sizeof(data_sz));
+			_memcpy(&data_sz, &buf_old_data[offset_buf + entry_name_sz], sizeof(data_sz));
 
 			bool found = false;
 			for(uint32_t i = 0; i < g_device_config_count; i++)
@@ -208,7 +209,7 @@ config_sts_t config_write_storage(void)
 
 			const uint32_t entry_name_sz = strlen(entry_name) + 1 /* '\0' */;
 			uint16_t data_sz;
-			memcpy(&data_sz, &buf_old_data[offset_buf + entry_name_sz], sizeof(data_sz));
+			_memcpy(&data_sz, &buf_old_data[offset_buf + entry_name_sz], sizeof(data_sz));
 
 			bool found = false;
 			for(uint32_t i = 0; i < g_device_config_count; i++)

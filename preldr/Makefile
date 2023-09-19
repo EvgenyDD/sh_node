@@ -40,6 +40,7 @@ INCDIR += ../common/STM32F10x_StdPeriph_Driver/inc
 SOURCES += startup_stm32f103xb.s
 SOURCES += $(wildcard ../common/crc/*.c)
 SOURCES += $(wildcard ../common/fw_header/*.c)
+SOURCES += ../common/lib.c
 SOURCES += ../common/platform.c
 SOURCES += ../common/ret_mem.c
 SOURCES += preldr.c
