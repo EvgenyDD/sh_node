@@ -1,0 +1,4 @@
+build/
+.vscode
+.gdbinit
+signer_fw_tool/signer_fw_tool*
