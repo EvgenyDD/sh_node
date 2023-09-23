@@ -21,7 +21,7 @@
     OD data initialization of all groups
 *******************************************************************************/
 OD_ATTR_PERSIST_COMM OD_PERSIST_COMM_t OD_PERSIST_COMM = {
-    .x1000_deviceType = 0x10000000,
+    .x1000_deviceType = 0x6E640000,
     .x1005_COB_ID_SYNCMessage = 0x00000080,
     .x1006_communicationCyclePeriod = 0x00000000,
     .x1007_synchronousWindowLength = 0x00000000,
@@ -81,7 +81,65 @@ OD_ATTR_RAM OD_RAM_t OD_RAM = {
         .error = 0x00000000
     },
     .x2000_errorBits_sub0 = 0x0A,
-    .x2000_errorBits = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+    .x2000_errorBits = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+    .x6000_adc = {
+        .highestSub_indexSupported = 0x09,
+        .ai0 = 0,
+        .ai1 = 0,
+        .ai2 = 0,
+        .ai3 = 0,
+        .i0 = 0,
+        .i1 = 0,
+        .srv = 0,
+        .aux = 0,
+        .vin = 0
+    },
+    .x6001_din = {
+        .highestSub_indexSupported = 0x01,
+        .pir = 0x00
+    },
+    .x6100_gps = {
+        .highestSub_indexSupported = 0x19,
+        .year = 0x0000,
+        .month = 0x00,
+        .day = 0x00,
+        .hour = 0x00,
+        .min = 0x00,
+        .sec = 0x00,
+        .nano = 0,
+        .iTOW = 0x00000000,
+        .tAcc = 0x00000000,
+        .lon = 0,
+        .lat = 0,
+        .height = 0,
+        .hMSL = 0,
+        .hAcc = 0x00000000,
+        .vAcc = 0x00000000,
+        .sAcc = 0x00000000,
+        .headAcc = 0x00000000,
+        .numSV = 0x00,
+        .headMot = 0,
+        .velN = 0,
+        .velE = 0,
+        .velD = 0,
+        .gSpeed = 0,
+        .pDOP = 0x0000,
+        .flags = 0x00000000
+    },
+    .x6101_baro = {
+        .highestSub_indexSupported = 0x02,
+        .pres = 0x00000000,
+        .temp = 0
+    },
+    .x6102_meteo = {
+        .highestSub_indexSupported = 0x06,
+        .wind_acc = 0x00000000,
+        .wind_heading = 0x0000,
+        .rain_acc = 0x00000000,
+        .rain_temp = 0,
+        .rain_heater = 0x00,
+        .solar = 0
+    }
 };
 
 
@@ -115,12 +173,17 @@ typedef struct {
     OD_obj_record_t o_1F56_appSoftIdentification[2];
     OD_obj_record_t o_1F57_flashStatusIdentification[2];
     OD_obj_array_t o_2000_errorBits;
+    OD_obj_record_t o_6000_adc[10];
+    OD_obj_record_t o_6001_din[2];
+    OD_obj_record_t o_6100_gps[26];
+    OD_obj_record_t o_6101_baro[3];
+    OD_obj_record_t o_6102_meteo[7];
 } ODObjs_t;
 
 static CO_PROGMEM ODObjs_t ODObjs = {
     .o_1000_deviceType = {
         .dataOrig = &OD_PERSIST_COMM.x1000_deviceType,
-        .attribute = ODA_SDO_R | ODA_MB,
+        .attribute = ODA_SDO_RW | ODA_MB,
         .dataLength = 4
     },
     .o_1001_errorRegister = {
@@ -380,6 +443,304 @@ static CO_PROGMEM ODObjs_t ODObjs = {
         .attribute = ODA_SDO_RW,
         .dataElementLength = 1,
         .dataElementSizeof = sizeof(uint8_t)
+    },
+    .o_6000_adc = {
+        {
+            .dataOrig = &OD_RAM.x6000_adc.highestSub_indexSupported,
+            .subIndex = 0,
+            .attribute = ODA_SDO_R,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.ai0,
+            .subIndex = 1,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.ai1,
+            .subIndex = 2,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.ai2,
+            .subIndex = 3,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.ai3,
+            .subIndex = 4,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.i0,
+            .subIndex = 5,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.i1,
+            .subIndex = 6,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.srv,
+            .subIndex = 7,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.aux,
+            .subIndex = 8,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6000_adc.vin,
+            .subIndex = 9,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        }
+    },
+    .o_6001_din = {
+        {
+            .dataOrig = &OD_RAM.x6001_din.highestSub_indexSupported,
+            .subIndex = 0,
+            .attribute = ODA_SDO_R,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6001_din.pir,
+            .subIndex = 1,
+            .attribute = ODA_SDO_RW,
+            .dataLength = 1
+        }
+    },
+    .o_6100_gps = {
+        {
+            .dataOrig = &OD_RAM.x6100_gps.highestSub_indexSupported,
+            .subIndex = 0,
+            .attribute = ODA_SDO_R,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.year,
+            .subIndex = 1,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.month,
+            .subIndex = 2,
+            .attribute = ODA_SDO_RW,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.day,
+            .subIndex = 3,
+            .attribute = ODA_SDO_RW,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.hour,
+            .subIndex = 4,
+            .attribute = ODA_SDO_RW,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.min,
+            .subIndex = 5,
+            .attribute = ODA_SDO_RW,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.sec,
+            .subIndex = 6,
+            .attribute = ODA_SDO_RW,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.nano,
+            .subIndex = 7,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.iTOW,
+            .subIndex = 8,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.tAcc,
+            .subIndex = 9,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.lon,
+            .subIndex = 10,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.lat,
+            .subIndex = 11,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.height,
+            .subIndex = 12,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.hMSL,
+            .subIndex = 13,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.hAcc,
+            .subIndex = 14,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.vAcc,
+            .subIndex = 15,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.sAcc,
+            .subIndex = 16,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.headAcc,
+            .subIndex = 17,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.numSV,
+            .subIndex = 18,
+            .attribute = ODA_SDO_RW,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.headMot,
+            .subIndex = 19,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.velN,
+            .subIndex = 20,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.velE,
+            .subIndex = 21,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.velD,
+            .subIndex = 22,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.gSpeed,
+            .subIndex = 23,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.pDOP,
+            .subIndex = 24,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6100_gps.flags,
+            .subIndex = 25,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        }
+    },
+    .o_6101_baro = {
+        {
+            .dataOrig = &OD_RAM.x6101_baro.highestSub_indexSupported,
+            .subIndex = 0,
+            .attribute = ODA_SDO_R,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6101_baro.pres,
+            .subIndex = 1,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6101_baro.temp,
+            .subIndex = 2,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        }
+    },
+    .o_6102_meteo = {
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.highestSub_indexSupported,
+            .subIndex = 0,
+            .attribute = ODA_SDO_R,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc,
+            .subIndex = 1,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.wind_heading,
+            .subIndex = 2,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.rain_acc,
+            .subIndex = 3,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.rain_temp,
+            .subIndex = 4,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.rain_heater,
+            .subIndex = 5,
+            .attribute = ODA_SDO_RW,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.solar,
+            .subIndex = 6,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        }
     }
 };
 
@@ -413,6 +774,11 @@ static OD_ATTR_OD OD_entry_t ODList[] = {
     {0x1F56, 0x02, ODT_REC, &ODObjs.o_1F56_appSoftIdentification, NULL},
     {0x1F57, 0x02, ODT_REC, &ODObjs.o_1F57_flashStatusIdentification, NULL},
     {0x2000, 0x0B, ODT_ARR, &ODObjs.o_2000_errorBits, NULL},
+    {0x6000, 0x0A, ODT_REC, &ODObjs.o_6000_adc, NULL},
+    {0x6001, 0x02, ODT_REC, &ODObjs.o_6001_din, NULL},
+    {0x6100, 0x1A, ODT_REC, &ODObjs.o_6100_gps, NULL},
+    {0x6101, 0x03, ODT_REC, &ODObjs.o_6101_baro, NULL},
+    {0x6102, 0x07, ODT_REC, &ODObjs.o_6102_meteo, NULL},
     {0x0000, 0x00, 0, NULL, NULL}
 };
 

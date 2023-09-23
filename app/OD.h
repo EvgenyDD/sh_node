@@ -16,7 +16,7 @@
 
         Created:      23/11/2020 14:00:00
         Created By:   
-        Modified:     11/09/2023 22:21:51
+        Modified:     23/09/2023 16:56:37
         Modified By:  
 
     Device Info:
@@ -121,6 +121,64 @@ typedef struct {
     } x1F57_flashStatusIdentification;
     uint8_t x2000_errorBits_sub0;
     uint8_t x2000_errorBits[OD_CNT_ARR_2000];
+    struct {
+        uint8_t highestSub_indexSupported;
+        int16_t ai0;
+        int16_t ai1;
+        int16_t ai2;
+        int16_t ai3;
+        int16_t i0;
+        int16_t i1;
+        int16_t srv;
+        int16_t aux;
+        int16_t vin;
+    } x6000_adc;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint8_t pir;
+    } x6001_din;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint16_t year;
+        uint8_t month;
+        uint8_t day;
+        uint8_t hour;
+        uint8_t min;
+        uint8_t sec;
+        int32_t nano;
+        uint32_t iTOW;
+        uint32_t tAcc;
+        int32_t lon;
+        int32_t lat;
+        int32_t height;
+        int32_t hMSL;
+        uint32_t hAcc;
+        uint32_t vAcc;
+        uint32_t sAcc;
+        uint32_t headAcc;
+        uint8_t numSV;
+        int32_t headMot;
+        int32_t velN;
+        int32_t velE;
+        int32_t velD;
+        int32_t gSpeed;
+        uint16_t pDOP;
+        uint32_t flags;
+    } x6100_gps;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint32_t pres;
+        int16_t temp;
+    } x6101_baro;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint32_t wind_acc;
+        uint16_t wind_heading;
+        uint32_t rain_acc;
+        int16_t rain_temp;
+        uint8_t rain_heater;
+        int16_t solar;
+    } x6102_meteo;
 } OD_RAM_t;
 
 #ifndef OD_ATTR_PERSIST_COMM
@@ -167,6 +225,11 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1F56 &OD->list[22]
 #define OD_ENTRY_H1F57 &OD->list[23]
 #define OD_ENTRY_H2000 &OD->list[24]
+#define OD_ENTRY_H6000 &OD->list[25]
+#define OD_ENTRY_H6001 &OD->list[26]
+#define OD_ENTRY_H6100 &OD->list[27]
+#define OD_ENTRY_H6101 &OD->list[28]
+#define OD_ENTRY_H6102 &OD->list[29]
 
 
 /*******************************************************************************
@@ -197,6 +260,11 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1F56_appSoftIdentification &OD->list[22]
 #define OD_ENTRY_H1F57_flashStatusIdentification &OD->list[23]
 #define OD_ENTRY_H2000_errorBits &OD->list[24]
+#define OD_ENTRY_H6000_adc &OD->list[25]
+#define OD_ENTRY_H6001_din &OD->list[26]
+#define OD_ENTRY_H6100_gps &OD->list[27]
+#define OD_ENTRY_H6101_baro &OD->list[28]
+#define OD_ENTRY_H6102_meteo &OD->list[29]
 
 
 /*******************************************************************************

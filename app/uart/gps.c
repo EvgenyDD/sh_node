@@ -1,4 +1,6 @@
 #include "gps.h"
+#include "CANopen.h"
+#include "OD.h"
 #include "platform.h"
 #include "uart_common.h"
 
@@ -8,7 +10,6 @@ static volatile uint8_t m8n_rx_buf[100];
 static volatile uint32_t rx_cnt = 0;
 static volatile bool m8n_rx_cplt_flag = false;
 
-static M8N_UBX_NAV_POSLLH posllh;
 static M8N_UBX_NAV_PVT pvt;
 
 static const unsigned char UBX_CFG_PRT[] = {
@@ -129,9 +130,50 @@ void M8N_UBX_NAV_PVT_Parsing(unsigned char *data, M8N_UBX_NAV_PVT *p)
 	p->pDOP = data[82] | data[83] << 8;
 	p->flags3 = data[84] | data[85] << 8;
 	p->reserved1 = data[86] | data[87] << 8 | data[88] << 16 | data[89] << 24;
-	p->headVeh = data[90] | data[91] << 8 | data[92] << 16 | data[93] << 24;
-	p->magDec = data[94] | data[95] << 8;
-	p->magAcc = data[96] | data[97] << 8;
+}
+
+static void sync_od(void)
+{
+	OD_RAM.x6100_gps.year = pvt.year;
+	OD_RAM.x6100_gps.month = pvt.month;
+	OD_RAM.x6100_gps.day = pvt.day;
+	OD_RAM.x6100_gps.hour = pvt.hour;
+	OD_RAM.x6100_gps.min = pvt.min;
+	OD_RAM.x6100_gps.sec = pvt.sec;
+	OD_RAM.x6100_gps.nano = pvt.nano;
+	OD_RAM.x6100_gps.iTOW = pvt.iTOW;
+	OD_RAM.x6100_gps.tAcc = pvt.tAcc;
+	OD_RAM.x6100_gps.lon = pvt.lon;
+	OD_RAM.x6100_gps.lat = pvt.lat;
+	OD_RAM.x6100_gps.height = pvt.height;
+	OD_RAM.x6100_gps.hMSL = pvt.hMSL;
+	OD_RAM.x6100_gps.hAcc = pvt.hAcc;
+	OD_RAM.x6100_gps.vAcc = pvt.vAcc;
+	OD_RAM.x6100_gps.sAcc = pvt.sAcc;
+	OD_RAM.x6100_gps.headAcc = pvt.headAcc;
+	OD_RAM.x6100_gps.numSV = pvt.numSV;
+	OD_RAM.x6100_gps.headMot = pvt.headMot;
+	OD_RAM.x6100_gps.velN = pvt.velN;
+	OD_RAM.x6100_gps.velE = pvt.velE;
+	OD_RAM.x6100_gps.velD = pvt.velD;
+	OD_RAM.x6100_gps.gSpeed = pvt.gSpeed;
+	OD_RAM.x6100_gps.pDOP = pvt.pDOP;
+	gps_flags_t f;
+	f.fix = pvt.fixType & 0x7;
+	f.val_date = (pvt.valid & (1 << 0)) ? 1 : 0;
+	f.val_time = (pvt.valid & (1 << 1)) ? 1 : 0;
+	f.fully_resolved = (pvt.valid & (1 << 2)) ? 1 : 0;
+	f.valid_mag = (pvt.valid & (1 << 3)) ? 1 : 0;
+	f.gnss_fix_ok = (pvt.flags & (1 << 0)) ? 1 : 0;
+	f.diff_soln = (pvt.flags & (1 << 1)) ? 1 : 0;
+	f.head_veh_valid = (pvt.flags & (1 << 5)) ? 1 : 0;
+	f.carr_soln = (pvt.flags & (1 << 7)) ? 1 : 0;
+	f.confirmed_avai = (pvt.flags2 & (1 << 5)) ? 1 : 0;
+	f.confirmed_date = (pvt.flags2 & (1 << 6)) ? 1 : 0;
+	f.confirmed_time = (pvt.flags2 & (1 << 7)) ? 1 : 0;
+	f.invalid_llh = (pvt.flags3 & (1 << 0)) ? 1 : 0;
+	f.last_corr_age = (pvt.flags3 >> 1) & 0xF;
+	OD_RAM.x6100_gps.flags = f.word;
 }
 
 void gps_poll(void)
@@ -144,9 +186,7 @@ void gps_poll(void)
 		{
 			M8N_UBX_NAV_PVT_Parsing((uint8_t *)&m8n_rx_buf[0], &pvt);
 
-			if(pvt.fixType == 2 || pvt.fixType == 3)
-			{
-			}
+			sync_od();
 		}
 	}
 }

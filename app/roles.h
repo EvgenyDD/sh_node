@@ -1,0 +1,16 @@
+#ifndef ROLES_H__
+#define ROLES_H__
+
+#include <stdint.h>
+
+#define ROLE_PREFIX 0x6E640000
+enum
+{
+	ND_ROLE_GENERIC = ROLE_PREFIX + 0,
+	ND_ROLE_METEO,
+	ND_ROLE_OUTDOOR,
+
+	ND_ROLE_BOOTLOADER = ROLE_PREFIX + 0XFFFF,
+} ND_ROLE_t;
+
+#endif // ROLES_H__

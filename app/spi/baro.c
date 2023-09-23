@@ -1,4 +1,6 @@
 #include "baro.h"
+#include "CANopen.h"
+#include "OD.h"
 #include "spi_common.h"
 #include "stm32f10x.h"
 #include <string.h>
@@ -144,5 +146,7 @@ void baro_poll(uint32_t diff_ms)
 
 		baro_data.temp = bmp280CompensateT(baro_data.temp_raw) / 10; // 0.1 * degrees
 		baro_data.pres = bmp280CompensateP(baro_data.pres_raw) >> 8; // Pascal
+		OD_RAM.x6101_baro.temp = baro_data.temp;
+		OD_RAM.x6101_baro.pres = baro_data.pres;
 	}
 }

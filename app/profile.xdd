@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2023-09-11" fileModificationTime="22:21:51.3259008+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2023-09-23" fileModificationTime="16:56:37.6079949+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Home</q1:vendorName>
         <q1:vendorID></q1:vendorID>
@@ -672,13 +672,167 @@
               <UDINT />
             </q1:varDeclaration>
           </q1:struct>
+          <q1:struct name="adc" uniqueID="UID_REC_6000">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_600000">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="ai0" uniqueID="UID_RECSUB_600001">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="ai1" uniqueID="UID_RECSUB_600002">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="ai2" uniqueID="UID_RECSUB_600003">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="ai3" uniqueID="UID_RECSUB_600004">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="i0" uniqueID="UID_RECSUB_600005">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="i1" uniqueID="UID_RECSUB_600006">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="srv" uniqueID="UID_RECSUB_600007">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="aux" uniqueID="UID_RECSUB_600008">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="vin" uniqueID="UID_RECSUB_600009">
+              <INT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="din" uniqueID="UID_REC_6001">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_600100">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="pir" uniqueID="UID_RECSUB_600101">
+              <USINT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="gps" uniqueID="UID_REC_6100">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_610000">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="year" uniqueID="UID_RECSUB_610001">
+              <UINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="month" uniqueID="UID_RECSUB_610002">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="day" uniqueID="UID_RECSUB_610003">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="hour" uniqueID="UID_RECSUB_610004">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="min" uniqueID="UID_RECSUB_610005">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="sec" uniqueID="UID_RECSUB_610006">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="nano" uniqueID="UID_RECSUB_610007">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="iTOW" uniqueID="UID_RECSUB_610008">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="tAcc" uniqueID="UID_RECSUB_610009">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="lon" uniqueID="UID_RECSUB_61000A">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="lat" uniqueID="UID_RECSUB_61000B">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="height" uniqueID="UID_RECSUB_61000C">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="hMSL" uniqueID="UID_RECSUB_61000D">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="hAcc" uniqueID="UID_RECSUB_61000E">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="vAcc" uniqueID="UID_RECSUB_61000F">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="sAcc" uniqueID="UID_RECSUB_610010">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="headAcc" uniqueID="UID_RECSUB_610011">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="numSV" uniqueID="UID_RECSUB_610012">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="headMot" uniqueID="UID_RECSUB_610013">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="velN" uniqueID="UID_RECSUB_610014">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="velE" uniqueID="UID_RECSUB_610015">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="velD" uniqueID="UID_RECSUB_610016">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="gSpeed" uniqueID="UID_RECSUB_610017">
+              <DINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="pDOP" uniqueID="UID_RECSUB_610018">
+              <UINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="flags" uniqueID="UID_RECSUB_610019">
+              <UDINT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="baro" uniqueID="UID_REC_6101">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_610100">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="pres" uniqueID="UID_RECSUB_610101">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="temp" uniqueID="UID_RECSUB_610102">
+              <INT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="meteo" uniqueID="UID_REC_6102">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_610200">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_acc" uniqueID="UID_RECSUB_610201">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_heading" uniqueID="UID_RECSUB_610202">
+              <UINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="rain_acc" uniqueID="UID_RECSUB_610203">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="rain_temp" uniqueID="UID_RECSUB_610204">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="rain_heater" uniqueID="UID_RECSUB_610205">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="solar" uniqueID="UID_RECSUB_610206">
+              <INT />
+            </q1:varDeclaration>
+          </q1:struct>
         </q1:dataTypeList>
         <q1:parameterList>
-          <q1:parameter uniqueID="UID_OBJ_1000">
+          <q1:parameter uniqueID="UID_OBJ_1000" access="readWrite">
             <description lang="en">* bit 16-31: Additional information
 * bit 0-15: Device profile number</description>
             <UDINT />
-            <q1:defaultValue value="0x10000000" />
+            <q1:defaultValue value="0x6E640000" />
             <q1:property name="CO_countLabel" value="NMT" />
             <q1:property name="CO_storageGroup" value="PERSIST_COMM" />
           </q1:parameter>
@@ -2458,6 +2612,266 @@
             <USINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6000">
+            <label lang="en">adc</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_6000" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600000">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x09" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600001" access="readWrite">
+            <label lang="en">ai0</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600002" access="readWrite">
+            <label lang="en">ai1</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600003" access="readWrite">
+            <label lang="en">ai2</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600004" access="readWrite">
+            <label lang="en">ai3</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600005" access="readWrite">
+            <label lang="en">i0</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600006" access="readWrite">
+            <label lang="en">i1</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600007" access="readWrite">
+            <label lang="en">srv</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600008" access="readWrite">
+            <label lang="en">aux</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600009" access="readWrite">
+            <label lang="en">vin</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6001">
+            <label lang="en">din</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_6001" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600100">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x01" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_600101" access="readWrite">
+            <label lang="en">pir</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6100">
+            <label lang="en">gps</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_6100" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610000">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x19" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610001" access="readWrite">
+            <label lang="en">year</label>
+            <UINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610002" access="readWrite">
+            <label lang="en">month</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610003" access="readWrite">
+            <label lang="en">day</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610004" access="readWrite">
+            <label lang="en">hour</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610005" access="readWrite">
+            <label lang="en">min</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610006" access="readWrite">
+            <label lang="en">sec</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610007" access="readWrite">
+            <label lang="en">nano</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610008" access="readWrite">
+            <label lang="en">iTOW</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610009" access="readWrite">
+            <label lang="en">tAcc</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61000A" access="readWrite">
+            <label lang="en">lon</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61000B" access="readWrite">
+            <label lang="en">lat</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61000C" access="readWrite">
+            <label lang="en">height</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61000D" access="readWrite">
+            <label lang="en">hMSL</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61000E" access="readWrite">
+            <label lang="en">hAcc</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61000F" access="readWrite">
+            <label lang="en">vAcc</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610010" access="readWrite">
+            <label lang="en">sAcc</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610011" access="readWrite">
+            <label lang="en">headAcc</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610012" access="readWrite">
+            <label lang="en">numSV</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610013" access="readWrite">
+            <label lang="en">headMot</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610014" access="readWrite">
+            <label lang="en">velN</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610015" access="readWrite">
+            <label lang="en">velE</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610016" access="readWrite">
+            <label lang="en">velD</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610017" access="readWrite">
+            <label lang="en">gSpeed</label>
+            <DINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610018" access="readWrite">
+            <label lang="en">pDOP</label>
+            <UINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610019" access="readWrite">
+            <label lang="en">flags</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6101">
+            <label lang="en">baro</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_6101" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610100">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x02" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610101" access="readWrite">
+            <label lang="en">pres</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610102" access="readWrite">
+            <label lang="en">temp</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6102">
+            <label lang="en">meteo</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_6102" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610200">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x06" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610201" access="readWrite">
+            <label lang="en">wind_acc</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610202" access="readWrite">
+            <label lang="en">wind_heading</label>
+            <UINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610203" access="readWrite">
+            <label lang="en">rain_acc</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610204" access="readWrite">
+            <label lang="en">rain_temp</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610205" access="readWrite">
+            <label lang="en">rain_heater</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610206" access="readWrite">
+            <label lang="en">solar</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
         </q1:parameterList>
       </q1:ApplicationProcess>
     </ProfileBody>
@@ -2475,7 +2889,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2023-09-11" fileModificationTime="22:21:51.3259008+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2023-09-23" fileModificationTime="16:56:37.6079949+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />
@@ -2819,6 +3233,64 @@
             <CANopenSubObject subIndex="08" name="Sub Object 8" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_200008" />
             <CANopenSubObject subIndex="09" name="Sub Object 9" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_200009" />
             <CANopenSubObject subIndex="0A" name="Sub Object 10" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_20000A" />
+          </CANopenObject>
+          <CANopenObject index="6000" name="adc" objectType="9" uniqueIDRef="UID_OBJ_6000" subNumber="10">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600000" />
+            <CANopenSubObject subIndex="01" name="ai0" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600001" />
+            <CANopenSubObject subIndex="02" name="ai1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600002" />
+            <CANopenSubObject subIndex="03" name="ai2" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600003" />
+            <CANopenSubObject subIndex="04" name="ai3" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600004" />
+            <CANopenSubObject subIndex="05" name="i0" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600005" />
+            <CANopenSubObject subIndex="06" name="i1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600006" />
+            <CANopenSubObject subIndex="07" name="srv" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600007" />
+            <CANopenSubObject subIndex="08" name="aux" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600008" />
+            <CANopenSubObject subIndex="09" name="vin" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600009" />
+          </CANopenObject>
+          <CANopenObject index="6001" name="din" objectType="9" uniqueIDRef="UID_OBJ_6001" subNumber="2">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600100" />
+            <CANopenSubObject subIndex="01" name="pir" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_600101" />
+          </CANopenObject>
+          <CANopenObject index="6100" name="gps" objectType="9" uniqueIDRef="UID_OBJ_6100" subNumber="26">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610000" />
+            <CANopenSubObject subIndex="01" name="year" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610001" />
+            <CANopenSubObject subIndex="02" name="month" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610002" />
+            <CANopenSubObject subIndex="03" name="day" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610003" />
+            <CANopenSubObject subIndex="04" name="hour" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610004" />
+            <CANopenSubObject subIndex="05" name="min" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610005" />
+            <CANopenSubObject subIndex="06" name="sec" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610006" />
+            <CANopenSubObject subIndex="07" name="nano" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610007" />
+            <CANopenSubObject subIndex="08" name="iTOW" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610008" />
+            <CANopenSubObject subIndex="09" name="tAcc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610009" />
+            <CANopenSubObject subIndex="0A" name="lon" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61000A" />
+            <CANopenSubObject subIndex="0B" name="lat" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61000B" />
+            <CANopenSubObject subIndex="0C" name="height" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61000C" />
+            <CANopenSubObject subIndex="0D" name="hMSL" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61000D" />
+            <CANopenSubObject subIndex="0E" name="hAcc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61000E" />
+            <CANopenSubObject subIndex="0F" name="vAcc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61000F" />
+            <CANopenSubObject subIndex="10" name="sAcc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610010" />
+            <CANopenSubObject subIndex="11" name="headAcc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610011" />
+            <CANopenSubObject subIndex="12" name="numSV" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610012" />
+            <CANopenSubObject subIndex="13" name="headMot" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610013" />
+            <CANopenSubObject subIndex="14" name="velN" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610014" />
+            <CANopenSubObject subIndex="15" name="velE" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610015" />
+            <CANopenSubObject subIndex="16" name="velD" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610016" />
+            <CANopenSubObject subIndex="17" name="gSpeed" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610017" />
+            <CANopenSubObject subIndex="18" name="pDOP" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610018" />
+            <CANopenSubObject subIndex="19" name="flags" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610019" />
+          </CANopenObject>
+          <CANopenObject index="6101" name="baro" objectType="9" uniqueIDRef="UID_OBJ_6101" subNumber="3">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610100" />
+            <CANopenSubObject subIndex="01" name="pres" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610101" />
+            <CANopenSubObject subIndex="02" name="temp" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610102" />
+          </CANopenObject>
+          <CANopenObject index="6102" name="meteo" objectType="9" uniqueIDRef="UID_OBJ_6102" subNumber="7">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610200" />
+            <CANopenSubObject subIndex="01" name="wind_acc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610201" />
+            <CANopenSubObject subIndex="02" name="wind_heading" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610202" />
+            <CANopenSubObject subIndex="03" name="rain_acc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610203" />
+            <CANopenSubObject subIndex="04" name="rain_temp" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610204" />
+            <CANopenSubObject subIndex="05" name="rain_heater" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610205" />
+            <CANopenSubObject subIndex="06" name="solar" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610206" />
           </CANopenObject>
         </q2:CANopenObjectList>
         <dummyUsage>

@@ -5,6 +5,7 @@
 #include "OD.h"
 #include "adc.h"
 #include "aht21.h"
+#include "apps.h"
 #include "baro.h"
 #include "can_driver.h"
 #include "config_system.h"
@@ -18,6 +19,7 @@
 #include "platform.h"
 #include "prof.h"
 #include "ret_mem.h"
+#include "roles.h"
 #include "spi_common.h"
 #include "uart_common.h"
 
@@ -46,6 +48,7 @@ config_entry_t g_device_config[] = {
 	{"can_id", sizeof(pending_can_node_id), 0, &pending_can_node_id},
 	{"can_baud", sizeof(pending_can_baud), 0, &pending_can_baud},
 	{"hb_prod_ms", sizeof(OD_PERSIST_COMM.x1017_producerHeartbeatTime), 0, &OD_PERSIST_COMM.x1017_producerHeartbeatTime},
+	{"dev_role", sizeof(OD_PERSIST_COMM.x1000_deviceType), 0, &OD_PERSIST_COMM.x1000_deviceType},
 };
 const uint32_t g_device_config_count = sizeof(g_device_config) / sizeof(g_device_config[0]);
 
@@ -152,7 +155,8 @@ void main(void)
 
 	aht21_init();
 	uart_common_init();
-	gps_init();
+
+	if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_METEO) meteo_init();
 
 	mag_init();
 	for(;;)
@@ -235,10 +239,14 @@ void main(void)
 				}
 
 				adc_track();
-				if(baro_data.sensor_present) baro_poll(diff_ms);
 				if(aht21_data.sensor_present) aht21_poll(diff_ms);
-				if(mag_data.sensor_present) mag_poll(diff_ms);
-				gps_poll();
+				if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_OUTDOOR ||
+				   OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_METEO)
+				{
+					if(baro_data.sensor_present) baro_poll(diff_ms);
+				}
+
+				if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_METEO) meteo_poll(diff_ms);
 
 				platform_watchdog_reset();
 			}

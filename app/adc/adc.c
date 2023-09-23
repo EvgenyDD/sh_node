@@ -1,11 +1,13 @@
 #include "adc.h"
+#include "CANopen.h"
+#include "OD.h"
 #include "stm32f10x.h"
 
 enum
 {
 	ADC_CH_VIN = 0,
 	ADC_CH_SRV,
-	ADC_CH_MQ2,
+	ADC_CH_AUX,
 	ADC_CH_I1,
 	ADC_CH_I0,
 	ADC_CH_AI0,
@@ -15,7 +17,7 @@ enum
 	ADC_CH,
 };
 
-adc_val_t adc_val = {0};
+// adc_val_t adc_val = {0};
 
 static volatile uint16_t adc_buf[ADC_CH];
 
@@ -89,15 +91,25 @@ void adc_track(void)
 	if(DMA1_Channel1->CNDTR == 0)
 	{
 		{
-			adc_val.vin = adc_buf[ADC_CH_VIN];
-			adc_val.srv_pos = adc_buf[ADC_CH_SRV];
-			adc_val.sns_mq2 = adc_buf[ADC_CH_MQ2];
-			adc_val.sns_i1 = adc_buf[ADC_CH_I1];
-			adc_val.sns_i0 = adc_buf[ADC_CH_I0];
-			adc_val.sns_ai0 = adc_buf[ADC_CH_AI0];
-			adc_val.sns_ai1 = adc_buf[ADC_CH_AI1];
-			adc_val.sns_ai2 = adc_buf[ADC_CH_AI2];
-			adc_val.sns_ai3 = adc_buf[ADC_CH_AI3];
+			// adc_val.vin = adc_buf[ADC_CH_VIN];
+			// adc_val.srv_pos = adc_buf[ADC_CH_SRV];
+			// adc_val.sns_mq2 = adc_buf[ADC_CH_AUX];
+			// adc_val.sns_i1 = adc_buf[ADC_CH_I1];
+			// adc_val.sns_i0 = adc_buf[ADC_CH_I0];
+			// adc_val.sns_ai0 = adc_buf[ADC_CH_AI0];
+			// adc_val.sns_ai1 = adc_buf[ADC_CH_AI1];
+			// adc_val.sns_ai2 = adc_buf[ADC_CH_AI2];
+			// adc_val.sns_ai3 = adc_buf[ADC_CH_AI3];
+
+			OD_RAM.x6000_adc.ai0 = adc_buf[ADC_CH_AI0];
+			OD_RAM.x6000_adc.ai1 = adc_buf[ADC_CH_AI1];
+			OD_RAM.x6000_adc.ai2 = adc_buf[ADC_CH_AI2];
+			OD_RAM.x6000_adc.ai3 = adc_buf[ADC_CH_AI3];
+			OD_RAM.x6000_adc.aux = adc_buf[ADC_CH_AUX];
+			OD_RAM.x6000_adc.srv = adc_buf[ADC_CH_SRV];
+			OD_RAM.x6000_adc.vin = adc_buf[ADC_CH_VIN];
+			OD_RAM.x6000_adc.i0 = adc_buf[ADC_CH_I0];
+			OD_RAM.x6000_adc.i1 = adc_buf[ADC_CH_I1];
 		}
 		DMA_Cmd(DMA1_Channel1, DISABLE);
 		DMA1_Channel1->CNDTR = ADC_CH;
