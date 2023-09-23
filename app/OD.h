@@ -16,7 +16,7 @@
 
         Created:      23/11/2020 14:00:00
         Created By:   
-        Modified:     23/09/2023 16:56:37
+        Modified:     23/09/2023 21:38:20
         Modified By:  
 
     Device Info:
@@ -179,6 +179,11 @@ typedef struct {
         uint8_t rain_heater;
         int16_t solar;
     } x6102_meteo;
+    struct {
+        uint8_t highestSub_indexSupported;
+        int16_t temp;
+        int16_t hum;
+    } x6103_aht21;
 } OD_RAM_t;
 
 #ifndef OD_ATTR_PERSIST_COMM
@@ -230,6 +235,7 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H6100 &OD->list[27]
 #define OD_ENTRY_H6101 &OD->list[28]
 #define OD_ENTRY_H6102 &OD->list[29]
+#define OD_ENTRY_H6103 &OD->list[30]
 
 
 /*******************************************************************************
@@ -265,6 +271,7 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H6100_gps &OD->list[27]
 #define OD_ENTRY_H6101_baro &OD->list[28]
 #define OD_ENTRY_H6102_meteo &OD->list[29]
+#define OD_ENTRY_H6103_aht21 &OD->list[30]
 
 
 /*******************************************************************************
