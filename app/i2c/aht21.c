@@ -1,9 +1,11 @@
 #include "aht21.h"
+#include "CANopen.h"
 #include "i2c_common.h"
+#include "OD.h"
 #include <stdbool.h>
 #include <stddef.h>
 
-#define POLL_HALF_INTERVAL 100
+#define POLL_HALF_INTERVAL 3000
 
 extern void delay_ms(volatile uint32_t delay_ms);
 aht21_t aht21_data = {0};
@@ -68,9 +70,11 @@ int aht21_poll(uint32_t diff_ms)
 			is_wait_conv = false;
 			uint32_t var = ((data[1] << 16) | (data[2] << 8) | data[3]) >> 4;
 			aht21_data.hum_0_1perc = (var * 125) >> 17;
+			OD_RAM.x6103_aht21.hum = aht21_data.hum_0_1perc;
 
 			var = ((data[3] & 0x0F) << 16) | (data[4] << 8) | data[5];
 			aht21_data.temp_0_1C = ((var * 125) >> 16) - 500;
+			OD_RAM.x6103_aht21.temp = aht21_data.temp_0_1C;
 		}
 		return sts;
 	}

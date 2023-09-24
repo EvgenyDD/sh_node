@@ -103,3 +103,16 @@ debug:
 	@echo "set confirm off" >> .gdbinit
 	@echo "target remote | openocd -c \"gdb_port pipe\" -f target/stm32_f103.cfg" >> .gdbinit
 	@arm-none-eabi-gdb -q -x .gdbinit
+
+define tftp_flash103
+	@atftp --verbose -p -r sh_nd_app$(1) -l $(2) 192.168.0.103
+endef
+
+2: $(BINARY_SIGNED)
+	$(call tftp_flash103,$@,$<)
+3: $(BINARY_SIGNED)
+	$(call tftp_flash103,$@,$<)
+4: $(BINARY_SIGNED)
+	$(call tftp_flash103,$@,$<)
+5: $(BINARY_SIGNED)
+	$(call tftp_flash103,$@,$<)

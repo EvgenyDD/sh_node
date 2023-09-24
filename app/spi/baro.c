@@ -7,7 +7,7 @@
 
 extern void delay_ms(volatile uint32_t delay_ms);
 
-#define POLL_INTERVAL 200
+#define POLL_INTERVAL 5000
 
 #define BMP280_CHIP_ID 0xD0
 #define BMP280_RST_REG 0xE0
