@@ -132,8 +132,16 @@ OD_ATTR_RAM OD_RAM_t OD_RAM = {
         .temp = 0
     },
     .x6102_meteo = {
-        .highestSub_indexSupported = 0x06,
+        .highestSub_indexSupported = 0x0E,
         .wind_acc = 0x00000000,
+        .wind_acc_e = 0x00000000,
+        .wind_acc_se = 0x00000000,
+        .wind_acc_s = 0x00000000,
+        .wind_acc_ne = 0x00000000,
+        .wind_acc_sw = 0x00000000,
+        .wind_acc_n = 0x00000000,
+        .wind_acc_nw = 0x00000000,
+        .wind_acc_w = 0x00000000,
         .wind_heading = 0x0000,
         .rain_acc = 0x00000000,
         .rain_temp = 0,
@@ -182,7 +190,7 @@ typedef struct {
     OD_obj_record_t o_6001_din[2];
     OD_obj_record_t o_6100_gps[26];
     OD_obj_record_t o_6101_baro[3];
-    OD_obj_record_t o_6102_meteo[7];
+    OD_obj_record_t o_6102_meteo[15];
     OD_obj_record_t o_6103_aht21[3];
 } ODObjs_t;
 
@@ -718,32 +726,80 @@ static CO_PROGMEM ODObjs_t ODObjs = {
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.wind_heading,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_e,
             .subIndex = 2,
             .attribute = ODA_SDO_RW | ODA_MB,
-            .dataLength = 2
+            .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.rain_acc,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_se,
             .subIndex = 3,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.rain_temp,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_s,
             .subIndex = 4,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_ne,
+            .subIndex = 5,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_sw,
+            .subIndex = 6,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_n,
+            .subIndex = 7,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_nw,
+            .subIndex = 8,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_w,
+            .subIndex = 9,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.wind_heading,
+            .subIndex = 10,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.rain_acc,
+            .subIndex = 11,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 4
+        },
+        {
+            .dataOrig = &OD_RAM.x6102_meteo.rain_temp,
+            .subIndex = 12,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 2
         },
         {
             .dataOrig = &OD_RAM.x6102_meteo.rain_heater,
-            .subIndex = 5,
+            .subIndex = 13,
             .attribute = ODA_SDO_RW,
             .dataLength = 1
         },
         {
             .dataOrig = &OD_RAM.x6102_meteo.solar,
-            .subIndex = 6,
+            .subIndex = 14,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 2
         }
@@ -804,7 +860,7 @@ static OD_ATTR_OD OD_entry_t ODList[] = {
     {0x6001, 0x02, ODT_REC, &ODObjs.o_6001_din, NULL},
     {0x6100, 0x1A, ODT_REC, &ODObjs.o_6100_gps, NULL},
     {0x6101, 0x03, ODT_REC, &ODObjs.o_6101_baro, NULL},
-    {0x6102, 0x07, ODT_REC, &ODObjs.o_6102_meteo, NULL},
+    {0x6102, 0x0F, ODT_REC, &ODObjs.o_6102_meteo, NULL},
     {0x6103, 0x03, ODT_REC, &ODObjs.o_6103_aht21, NULL},
     {0x0000, 0x00, 0, NULL, NULL}
 };

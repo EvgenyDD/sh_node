@@ -16,7 +16,7 @@
 
         Created:      23/11/2020 14:00:00
         Created By:   
-        Modified:     23/09/2023 21:38:20
+        Modified:     24/09/2023 9:04:38
         Modified By:  
 
     Device Info:
@@ -173,6 +173,14 @@ typedef struct {
     struct {
         uint8_t highestSub_indexSupported;
         uint32_t wind_acc;
+        uint32_t wind_acc_e;
+        uint32_t wind_acc_se;
+        uint32_t wind_acc_s;
+        uint32_t wind_acc_ne;
+        uint32_t wind_acc_sw;
+        uint32_t wind_acc_n;
+        uint32_t wind_acc_nw;
+        uint32_t wind_acc_w;
         uint16_t wind_heading;
         uint32_t rain_acc;
         int16_t rain_temp;

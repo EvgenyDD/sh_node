@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2023-09-23" fileModificationTime="21:38:20.6812202+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2023-09-24" fileModificationTime="09:04:38.8900971+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Home</q1:vendorName>
         <q1:vendorID></q1:vendorID>
@@ -810,19 +810,43 @@
             <q1:varDeclaration name="wind_acc" uniqueID="UID_RECSUB_610201">
               <UDINT />
             </q1:varDeclaration>
-            <q1:varDeclaration name="wind_heading" uniqueID="UID_RECSUB_610202">
-              <UINT />
-            </q1:varDeclaration>
-            <q1:varDeclaration name="rain_acc" uniqueID="UID_RECSUB_610203">
+            <q1:varDeclaration name="wind_acc_e" uniqueID="UID_RECSUB_610202">
               <UDINT />
             </q1:varDeclaration>
-            <q1:varDeclaration name="rain_temp" uniqueID="UID_RECSUB_610204">
+            <q1:varDeclaration name="wind_acc_se" uniqueID="UID_RECSUB_610203">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_acc_s" uniqueID="UID_RECSUB_610204">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_acc_ne" uniqueID="UID_RECSUB_610205">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_acc_sw" uniqueID="UID_RECSUB_610206">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_acc_n" uniqueID="UID_RECSUB_610207">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_acc_nw" uniqueID="UID_RECSUB_610208">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_acc_w" uniqueID="UID_RECSUB_610209">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="wind_heading" uniqueID="UID_RECSUB_61020A">
+              <UINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="rain_acc" uniqueID="UID_RECSUB_61020B">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="rain_temp" uniqueID="UID_RECSUB_61020C">
               <INT />
             </q1:varDeclaration>
-            <q1:varDeclaration name="rain_heater" uniqueID="UID_RECSUB_610205">
+            <q1:varDeclaration name="rain_heater" uniqueID="UID_RECSUB_61020D">
               <USINT />
             </q1:varDeclaration>
-            <q1:varDeclaration name="solar" uniqueID="UID_RECSUB_610206">
+            <q1:varDeclaration name="solar" uniqueID="UID_RECSUB_61020E">
               <INT />
             </q1:varDeclaration>
           </q1:struct>
@@ -2851,7 +2875,7 @@
           <q1:parameter uniqueID="UID_SUB_610200">
             <label lang="en">Highest sub-index supported</label>
             <USINT />
-            <q1:defaultValue value="0x06" />
+            <q1:defaultValue value="0x0E" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_610201" access="readWrite">
             <label lang="en">wind_acc</label>
@@ -2859,26 +2883,66 @@
             <q1:defaultValue value="0" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_610202" access="readWrite">
-            <label lang="en">wind_heading</label>
-            <UINT />
+            <label lang="en">wind_acc_e</label>
+            <UDINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_610203" access="readWrite">
-            <label lang="en">rain_acc</label>
+            <label lang="en">wind_acc_se</label>
             <UDINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_610204" access="readWrite">
+            <label lang="en">wind_acc_s</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610205" access="readWrite">
+            <label lang="en">wind_acc_ne</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610206" access="readWrite">
+            <label lang="en">wind_acc_sw</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610207" access="readWrite">
+            <label lang="en">wind_acc_n</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610208" access="readWrite">
+            <label lang="en">wind_acc_nw</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610209" access="readWrite">
+            <label lang="en">wind_acc_w</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61020A" access="readWrite">
+            <label lang="en">wind_heading</label>
+            <UINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61020B" access="readWrite">
+            <label lang="en">rain_acc</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61020C" access="readWrite">
             <label lang="en">rain_temp</label>
             <INT />
             <q1:defaultValue value="0" />
           </q1:parameter>
-          <q1:parameter uniqueID="UID_SUB_610205" access="readWrite">
+          <q1:parameter uniqueID="UID_SUB_61020D" access="readWrite">
             <label lang="en">rain_heater</label>
             <USINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
-          <q1:parameter uniqueID="UID_SUB_610206" access="readWrite">
+          <q1:parameter uniqueID="UID_SUB_61020E" access="readWrite">
             <label lang="en">solar</label>
             <INT />
             <q1:defaultValue value="0" />
@@ -2919,7 +2983,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2023-09-23" fileModificationTime="21:38:20.6812202+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2023-09-24" fileModificationTime="09:04:38.8900971+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />
@@ -3313,14 +3377,22 @@
             <CANopenSubObject subIndex="01" name="pres" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610101" />
             <CANopenSubObject subIndex="02" name="temp" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610102" />
           </CANopenObject>
-          <CANopenObject index="6102" name="meteo" objectType="9" uniqueIDRef="UID_OBJ_6102" subNumber="7">
+          <CANopenObject index="6102" name="meteo" objectType="9" uniqueIDRef="UID_OBJ_6102" subNumber="15">
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610200" />
             <CANopenSubObject subIndex="01" name="wind_acc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610201" />
-            <CANopenSubObject subIndex="02" name="wind_heading" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610202" />
-            <CANopenSubObject subIndex="03" name="rain_acc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610203" />
-            <CANopenSubObject subIndex="04" name="rain_temp" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610204" />
-            <CANopenSubObject subIndex="05" name="rain_heater" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610205" />
-            <CANopenSubObject subIndex="06" name="solar" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610206" />
+            <CANopenSubObject subIndex="02" name="wind_acc_e" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610202" />
+            <CANopenSubObject subIndex="03" name="wind_acc_se" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610203" />
+            <CANopenSubObject subIndex="04" name="wind_acc_s" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610204" />
+            <CANopenSubObject subIndex="05" name="wind_acc_ne" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610205" />
+            <CANopenSubObject subIndex="06" name="wind_acc_sw" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610206" />
+            <CANopenSubObject subIndex="07" name="wind_acc_n" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610207" />
+            <CANopenSubObject subIndex="08" name="wind_acc_nw" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610208" />
+            <CANopenSubObject subIndex="09" name="wind_acc_w" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610209" />
+            <CANopenSubObject subIndex="0A" name="wind_heading" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61020A" />
+            <CANopenSubObject subIndex="0B" name="rain_acc" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61020B" />
+            <CANopenSubObject subIndex="0C" name="rain_temp" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61020C" />
+            <CANopenSubObject subIndex="0D" name="rain_heater" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61020D" />
+            <CANopenSubObject subIndex="0E" name="solar" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61020E" />
           </CANopenObject>
           <CANopenObject index="6103" name="aht21" objectType="9" uniqueIDRef="UID_OBJ_6103" subNumber="3">
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610300" />
