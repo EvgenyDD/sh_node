@@ -135,13 +135,13 @@ OD_ATTR_RAM OD_RAM_t OD_RAM = {
         .highestSub_indexSupported = 0x0E,
         .wind_acc = 0x00000000,
         .wind_acc_e = 0x00000000,
-        .wind_acc_se = 0x00000000,
-        .wind_acc_s = 0x00000000,
         .wind_acc_ne = 0x00000000,
-        .wind_acc_sw = 0x00000000,
         .wind_acc_n = 0x00000000,
         .wind_acc_nw = 0x00000000,
         .wind_acc_w = 0x00000000,
+        .wind_acc_sw = 0x00000000,
+        .wind_acc_s = 0x00000000,
+        .wind_acc_se = 0x00000000,
         .wind_heading = 0x0000,
         .rain_acc = 0x00000000,
         .rain_temp = 0,
@@ -732,43 +732,43 @@ static CO_PROGMEM ODObjs_t ODObjs = {
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_se,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_ne,
             .subIndex = 3,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_s,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_n,
             .subIndex = 4,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_ne,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_nw,
             .subIndex = 5,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_sw,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_w,
             .subIndex = 6,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_n,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_sw,
             .subIndex = 7,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_nw,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_s,
             .subIndex = 8,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 4
         },
         {
-            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_w,
+            .dataOrig = &OD_RAM.x6102_meteo.wind_acc_se,
             .subIndex = 9,
             .attribute = ODA_SDO_RW | ODA_MB,
             .dataLength = 4
