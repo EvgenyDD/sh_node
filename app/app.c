@@ -10,6 +10,7 @@
 #include "can_driver.h"
 #include "config_system.h"
 #include "crc.h"
+#include "dsm501.h"
 #include "flasher_sdo.h"
 #include "fw_header.h"
 #include "gps.h"
@@ -36,6 +37,9 @@
 bool g_stay_in_boot = false;
 uint32_t g_uid[3];
 CO_t *CO = NULL;
+
+extern void pir_init(void);
+extern void pir_poll(uint32_t diff_ms);
 
 uint8_t g_active_can_node_id = 127;		  /* Copied from CO_pending_can_node_id in the communication reset section */
 static uint8_t pending_can_node_id = 127; /* read from dip switches or nonvolatile memory, configurable by LSS slave */
@@ -156,6 +160,9 @@ void main(void)
 	aht21_init();
 	uart_common_init();
 
+	if(OD_PERSIST_COMM.x1000_deviceType != ND_ROLE_METEO) dsm501_init();
+	if(OD_PERSIST_COMM.x1000_deviceType != ND_ROLE_METEO) pir_init();
+
 	if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_METEO) meteo_init();
 
 	mag_init();
@@ -246,8 +253,15 @@ void main(void)
 					if(baro_data.sensor_present) baro_poll(diff_ms);
 				}
 
-				if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_METEO) meteo_poll(diff_ms);
-
+				if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_METEO)
+				{
+					meteo_poll(diff_ms);
+				}
+				else
+				{
+					dsm501_poll(diff_ms);
+					pir_poll(diff_ms);
+				}
 				platform_watchdog_reset();
 			}
 		}

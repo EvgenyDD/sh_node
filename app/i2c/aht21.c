@@ -17,7 +17,7 @@ aht21_t aht21_data = {0};
 #define AHT21_CMD_INIT 0xBE
 
 static bool is_wait_conv = false;
-static uint32_t tmr_poll = 0;
+static uint32_t tmr_poll = POLL_HALF_INTERVAL;
 
 int aht21_read_status(uint8_t *status) { return i2c_common_read(AHT21_ADDR, status, 1); }
 int aht21_reset(void) { return i2c_common_write(AHT21_ADDR, AHT21_CMD_RESET, NULL, 0); }
@@ -40,7 +40,7 @@ int aht21_init(void)
 	if(sts) return sts;
 	if((status & (1 << 3)) != (1 << 3))
 	{
-		sts = i2c_common_write(AHT21_ADDR, AHT21_CMD_INIT, (uint8_t[]){0x08, 0x00}, 2);
+		// sts = i2c_common_write(AHT21_ADDR, AHT21_CMD_INIT, (uint8_t[]){0x08, 0x00}, 2);
 		delay_ms(10);
 	}
 	// return aht21_reset();
@@ -73,7 +73,7 @@ int aht21_poll(uint32_t diff_ms)
 			OD_RAM.x6103_aht21.hum = aht21_data.hum_0_1perc;
 
 			var = ((data[3] & 0x0F) << 16) | (data[4] << 8) | data[5];
-			aht21_data.temp_0_1C = ((var * 125) >> 16) - 500;
+			aht21_data.temp_0_1C =var *200*10/1024/1024-500;
 			OD_RAM.x6103_aht21.temp = aht21_data.temp_0_1C;
 		}
 		return sts;
