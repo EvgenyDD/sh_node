@@ -104,15 +104,19 @@ debug:
 	@echo "target remote | openocd -c \"gdb_port pipe\" -f target/stm32_f103.cfg" >> .gdbinit
 	@arm-none-eabi-gdb -q -x .gdbinit
 
-define tftp_flash103
-	@atftp --verbose -p -r sh_nd_app$(1) -l $(2) 192.168.0.103
+define tftp_flash
+	@atftp --verbose -p -r sh_nd_app$(2) -l $(3) 7.7.7.$(1)
+endef
+define tftp_flash
+	@atftp --verbose -p -r sh_nd_app$(2) -l $(3) 7.7.7.$(1)
 endef
 
-2: $(BINARY_SIGNED)
-	$(call tftp_flash103,$@,$<)
-3: $(BINARY_SIGNED)
-	$(call tftp_flash103,$@,$<)
-4: $(BINARY_SIGNED)
-	$(call tftp_flash103,$@,$<)
-5: $(BINARY_SIGNED)
-	$(call tftp_flash103,$@,$<)
+112: $(BINARY_SIGNED)
+	$(call tftp_flash,11,2,$<)
+113: $(BINARY_SIGNED)
+	$(call tftp_flash,11,3,$<)
+
+122: $(BINARY_SIGNED)
+	$(call tftp_flash,12,2,$<)
+124: $(BINARY_SIGNED)
+	$(call tftp_flash,12,4,$<)

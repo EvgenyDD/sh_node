@@ -22,7 +22,7 @@ void pir_poll(uint32_t diff_ms)
 {
 	if(GPIOB->IDR & (1 << 12))
 	{
-		GPIOA->BSRR = (1 << 1);
+		GPIOD->BSRR = (1 << 1);
 		delay_counter = TO_ms;
 	}
 	else
@@ -31,14 +31,14 @@ void pir_poll(uint32_t diff_ms)
 		{
 			delay_counter -= diff_ms;
 			if((delay_counter % 300) > 200)
-				GPIOA->BSRR = (1 << 1);
+				GPIOD->BSRR = (1 << 1);
 			else
-				GPIOA->BRR = (1 << 1);
+				GPIOD->BRR = (1 << 1);
 		}
 		else
 		{
 			delay_counter = 0;
-			GPIOA->BRR = (1 << 1);
+			GPIOD->BRR = (1 << 1);
 		}
 	}
 }

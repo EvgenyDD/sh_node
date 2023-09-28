@@ -35,8 +35,8 @@ void meteo_init(void)
 
 void meteo_poll(uint32_t diff_ms)
 {
-	debounce_cb(&deb_wind, GPIOB->IDR & (1 << 10), diff_ms);
-	debounce_cb(&deb_rain, GPIOB->IDR & (1 << 11), diff_ms);
+	debounce_cb(&deb_wind, !(GPIOB->IDR & (1 << 10)), diff_ms);
+	debounce_cb(&deb_rain, !(GPIOB->IDR & (1 << 11)), diff_ms);
 	gps_poll();
 	if(mag_data.sensor_present) mag_poll(diff_ms);
 

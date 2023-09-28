@@ -137,7 +137,7 @@ void main(void)
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15;
 	GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-	GPIOC->BSRR = (1 << 14);
+	// GPIOC->BSRR = (1 << 14); // 
 
 	fw_header_check_all();
 
