@@ -1,3 +1,4 @@
+#include "uart_common.h"
 #include "platform.h"
 #include "stm32f10x.h"
 

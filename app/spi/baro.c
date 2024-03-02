@@ -144,9 +144,9 @@ void baro_poll(uint32_t diff_ms)
 		baro_data.pres_raw = (int32_t)((((uint32_t)(data_rx[1])) << 12) | (((uint32_t)(data_rx[2])) << 4) | ((uint32_t)data_rx[3] >> 4));
 		baro_data.temp_raw = (int32_t)((((uint32_t)(data_rx[4])) << 12) | (((uint32_t)(data_rx[5])) << 4) | ((uint32_t)data_rx[6] >> 4));
 
-		baro_data.temp = bmp280CompensateT(baro_data.temp_raw) / 10; // 0.1 * degrees
-		baro_data.pres = bmp280CompensateP(baro_data.pres_raw) >> 8; // Pascal
+		baro_data.temp = (int32_t)bmp280CompensateT(baro_data.temp_raw) / 10; // 0.1 * degrees
+		baro_data.pres = (int32_t)bmp280CompensateP(baro_data.pres_raw) >> 8; // Pascal
 		OD_RAM.x6101_baro.temp = baro_data.temp;
-		OD_RAM.x6101_baro.pres = baro_data.pres;
+		OD_RAM.x6101_baro.pres = (uint32_t)baro_data.pres;
 	}
 }

@@ -1019,7 +1019,7 @@ CO_ReturnError_t CO_CANopenInit(CO_t *co,
     /* SDOserver */
     if (CO_GET_CNT(SDO_SRV) > 0) {
         OD_entry_t *SDOsrvPar = OD_GET(H1200, OD_H1200_SDO_SERVER_1_PARAM);
-        for (int16_t i = 0; i < CO_GET_CNT(SDO_SRV); i++) {
+        for (uint16_t i = 0; i < CO_GET_CNT(SDO_SRV); i++) {
             err = CO_SDOserver_init(&co->SDOserver[i],
                                     od,
                                     SDOsrvPar++,

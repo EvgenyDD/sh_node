@@ -18,7 +18,7 @@
 
 debounce_ctrl_t deb_wind = {0}, deb_rain = {0};
 
-static const uint16_t head_values[]={840, 1485, 2048, 2775, 3292, 3664, 3862, 3966};
+static const uint16_t head_values[] = {840, 1485, 2048, 2775, 3292, 3664, 3862, 3966};
 
 void meteo_init(void)
 {
@@ -42,43 +42,43 @@ void meteo_poll(uint32_t diff_ms)
 
 	OD_RAM.x6102_meteo.wind_acc += deb_wind.pressed_shot ? 1 : 0;
 	OD_RAM.x6102_meteo.rain_acc += deb_rain.pressed_shot ? 1 : 0;
-	OD_RAM.x6102_meteo.solar = OD_RAM.x6000_adc.ai0;
-	OD_RAM.x6102_meteo.rain_temp = OD_RAM.x6000_adc.ai1;
+	OD_RAM.x6102_meteo.solar = (int16_t)adc_val.sns_ai[0];
+	OD_RAM.x6102_meteo.rain_temp = (int16_t)ntc10k_adc_to_degc(adc_val.sns_ai[1]);
 
 	// determine heading
-	const uint16_t v = OD_RAM.x6000_adc.ai2;
+	const int16_t v = (int16_t)adc_val.sns_ai[2];
 	uint8_t head;
 	if(v <= (V0e + V1se) / 2)
 	{
 		head = HEAD_E;
 		OD_RAM.x6102_meteo.wind_acc_e += deb_wind.pressed_shot ? 1 : 0;
 	}
-	else if(v <= (V1se + V2s) / 2) 
+	else if(v <= (V1se + V2s) / 2)
 	{
 		head = HEAD_SE;
 		OD_RAM.x6102_meteo.wind_acc_se += deb_wind.pressed_shot ? 1 : 0;
 	}
-	else if(v <= (V2s + V3ne) / 2) 
+	else if(v <= (V2s + V3ne) / 2)
 	{
 		head = HEAD_S;
 		OD_RAM.x6102_meteo.wind_acc_s += deb_wind.pressed_shot ? 1 : 0;
 	}
-	else if(v <= (V3ne + V4sw) / 2) 
+	else if(v <= (V3ne + V4sw) / 2)
 	{
 		head = HEAD_NE;
 		OD_RAM.x6102_meteo.wind_acc_ne += deb_wind.pressed_shot ? 1 : 0;
 	}
-	else if(v <= (V4sw + V5n) / 2) 
+	else if(v <= (V4sw + V5n) / 2)
 	{
 		head = HEAD_SW;
 		OD_RAM.x6102_meteo.wind_acc_sw += deb_wind.pressed_shot ? 1 : 0;
 	}
-	else if(v <= (V5n + V6nw) / 2) 
+	else if(v <= (V5n + V6nw) / 2)
 	{
 		head = HEAD_N;
 		OD_RAM.x6102_meteo.wind_acc_n += deb_wind.pressed_shot ? 1 : 0;
 	}
-	else if(v <= (V6nw + V7w) / 2) 
+	else if(v <= (V6nw + V7w) / 2)
 	{
 		head = HEAD_NW;
 		OD_RAM.x6102_meteo.wind_acc_nw += deb_wind.pressed_shot ? 1 : 0;

@@ -303,7 +303,11 @@ ODR_t OD_get_value(const OD_entry_t *entry, uint8_t subIndex,
     if (val == NULL) return ODR_DEV_INCOMPAT;
 
     OD_IO_t io;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
     OD_stream_t *stream = (OD_stream_t *)&io;
+#pragma GCC diagnostic pop
+
     OD_size_t countRd = 0;
 
     ODR_t ret = OD_getSub(entry, subIndex, &io, odOrig);

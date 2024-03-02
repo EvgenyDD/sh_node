@@ -2,6 +2,8 @@
 #include "config_system.h"
 #include "storage/CO_storage.h"
 
+#include "CO_driver_storage.h"
+
 #if(CO_CONFIG_STORAGE) & CO_CONFIG_STORAGE_ENABLE
 
 #define PARAM_STORE_PASSWORD 0x73617665	  // s a v e

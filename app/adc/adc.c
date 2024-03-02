@@ -14,10 +14,24 @@ enum
 	ADC_CH_AI1,
 	ADC_CH_AI2,
 	ADC_CH_AI3,
+	ADC_CH_T_MCU,
 	ADC_CH,
 };
 
-// adc_val_t adc_val = {0};
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define CLIP(a, l, h) (MAX((MIN((a), (h))), (l)))
+
+#define v_ref 3.3f
+#define adc_max_cnt 4095.0f
+
+// #define current_scale (v_ref / (adc_max_cnt * 0.020f * 50.0f))
+#define current_scale_10ma 1 / 1241
+
+// #define voltage_scale_10mv v_ref / adc_max_cnt * (1.0f + 105.0f / 13.7f)
+#define voltage_scale_10mv 1000 / 143222
+
+adc_val_t adc_val = {0};
 
 static volatile uint16_t adc_buf[ADC_CH];
 
@@ -51,6 +65,7 @@ void adc_init(void)
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_6, 7, ADC_SampleTime_239Cycles5);
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 8, ADC_SampleTime_239Cycles5);
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 9, ADC_SampleTime_239Cycles5);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_TempSensor, 10, ADC_SampleTime_239Cycles5);
 
 	DMA_DeInit(DMA1_Channel1);
 	DMA_InitTypeDef dma_struct;
@@ -86,35 +101,48 @@ void adc_trig_conv(void)
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 }
 
-void adc_track(void)
+bool adc_track(void)
 {
+	bool upd = false;
 	if(DMA1_Channel1->CNDTR == 0)
 	{
-		{
-			// adc_val.vin = adc_buf[ADC_CH_VIN];
-			// adc_val.srv_pos = adc_buf[ADC_CH_SRV];
-			// adc_val.sns_mq2 = adc_buf[ADC_CH_AUX];
-			// adc_val.sns_i1 = adc_buf[ADC_CH_I1];
-			// adc_val.sns_i0 = adc_buf[ADC_CH_I0];
-			// adc_val.sns_ai0 = adc_buf[ADC_CH_AI0];
-			// adc_val.sns_ai1 = adc_buf[ADC_CH_AI1];
-			// adc_val.sns_ai2 = adc_buf[ADC_CH_AI2];
-			// adc_val.sns_ai3 = adc_buf[ADC_CH_AI3];
+		adc_val.vin = (uint16_t)((int32_t)adc_buf[ADC_CH_VIN] * voltage_scale_10mv);
+		adc_val.srv_pos = adc_buf[ADC_CH_SRV];
+		adc_val.sns_mq2 = adc_buf[ADC_CH_AUX];
+		adc_val.sns_i[0] = (uint16_t)((int32_t)adc_buf[ADC_CH_I0] * current_scale_10ma);
+		adc_val.sns_i[1] = (uint16_t)((int32_t)adc_buf[ADC_CH_I1] * current_scale_10ma);
+		adc_val.sns_ai[0] = adc_buf[ADC_CH_AI0];
+		adc_val.sns_ai[1] = adc_buf[ADC_CH_AI1];
+		adc_val.sns_ai[2] = adc_buf[ADC_CH_AI2];
+		adc_val.sns_ai[3] = adc_buf[ADC_CH_AI3];
 
-			OD_RAM.x6000_adc.ai0 = adc_buf[ADC_CH_AI0];
-			OD_RAM.x6000_adc.ai1 = adc_buf[ADC_CH_AI1];
-			OD_RAM.x6000_adc.ai2 = adc_buf[ADC_CH_AI2];
-			OD_RAM.x6000_adc.ai3 = adc_buf[ADC_CH_AI3];
-			OD_RAM.x6000_adc.aux = adc_buf[ADC_CH_AUX];
-			OD_RAM.x6000_adc.srv = adc_buf[ADC_CH_SRV];
-			OD_RAM.x6000_adc.vin = adc_buf[ADC_CH_VIN];
-			OD_RAM.x6000_adc.i0 = adc_buf[ADC_CH_I0];
-			OD_RAM.x6000_adc.i1 = adc_buf[ADC_CH_I1];
-		}
+		// adc_val.t_mcu = (1.43f - adc_buf[ADC_CH_T_MCU] / adc_max_cnt * v_ref) / 0.0043 + 25;
+		adc_val.t_mcu = (3575580 - adc_buf[ADC_CH_T_MCU] * 1874) / 10000;
+
+		upd = true;
+
 		DMA_Cmd(DMA1_Channel1, DISABLE);
 		DMA1_Channel1->CNDTR = ADC_CH;
 		DMA1_Channel1->CMAR = (uint32_t)adc_buf;
 		DMA_Cmd(DMA1_Channel1, ENABLE);
 		adc_trig_conv();
 	}
+	return upd;
+}
+
+int32_t ntc10k_adc_to_degc(int32_t adc_norm)
+{
+	static int32_t ntc10k_t[] = {201150, 152520, 117150, 98270, 85510, 75780, 68040, 61460,
+								 55720, 50580, 45880, 41670, 37650, 33820, 30240, 26720,
+								 23340, 19990, 16680, 13370, 10050, 6650, 3200, -470,
+								 -4280, -8390, -12970, -18120, -24240, -32070, -42990, -54470};
+
+	int32_t n = sizeof(ntc10k_t) / sizeof(ntc10k_t[0]);
+
+	int32_t inp_dx = adc_norm * (n - 1) / 4095;
+	int32_t idx = CLIP(inp_dx, 0, n - 2);
+	int32_t dy = ntc10k_t[idx + 1] - ntc10k_t[idx];
+
+	int32_t res = (ntc10k_t[idx] + (adc_norm * (n - 1) - idx * 4095) * dy / 4095) / 1000;
+	return res;
 }

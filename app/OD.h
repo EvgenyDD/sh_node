@@ -14,9 +14,9 @@
         Project File: profile.xdd
         File Version: 1
 
-        Created:      23/11/2020 14:00:00
+        Created:      23/11/2020 13:00:00
         Created By:   
-        Modified:     24/09/2023 9:35:14
+        Modified:     02/03/2024 21:55:56
         Modified By:  
 
     Device Info:
@@ -44,6 +44,8 @@
 #define OD_CNT_HB_PROD 1
 #define OD_CNT_SDO_SRV 1
 #define OD_CNT_SDO_CLI 1
+#define OD_CNT_RPDO 1
+#define OD_CNT_TPDO 1
 
 
 /*******************************************************************************
@@ -91,6 +93,42 @@ typedef struct {
         uint32_t COB_IDServerToClientRx;
         uint8_t node_IDOfTheSDOServer;
     } x1280_SDOClientParameter;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint32_t COB_IDUsedByRPDO;
+        uint8_t transmissionType;
+        uint16_t eventTimer;
+    } x1400_RPDOCommunicationParameter;
+    struct {
+        uint8_t numberOfMappedApplicationObjectsInPDO;
+        uint32_t applicationObject_1;
+        uint32_t applicationObject_2;
+        uint32_t applicationObject_3;
+        uint32_t applicationObject_4;
+        uint32_t applicationObject_5;
+        uint32_t applicationObject_6;
+        uint32_t applicationObject_7;
+        uint32_t applicationObject_8;
+    } x1600_RPDOMappingParameter;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint32_t COB_IDUsedByTPDO;
+        uint8_t transmissionType;
+        uint16_t inhibitTime;
+        uint16_t eventTimer;
+        uint8_t SYNCStartValue;
+    } x1800_TPDOCommunicationParameter;
+    struct {
+        uint8_t numberOfMappedApplicationObjectsInPDO;
+        uint32_t applicationObject_1;
+        uint32_t applicationObject_2;
+        uint32_t applicationObject_3;
+        uint32_t applicationObject_4;
+        uint32_t applicationObject_5;
+        uint32_t applicationObject_6;
+        uint32_t applicationObject_7;
+        uint32_t applicationObject_8;
+    } x1A00_TPDOMappingParameter;
 } OD_PERSIST_COMM_t;
 
 typedef struct {
@@ -132,6 +170,7 @@ typedef struct {
         int16_t srv;
         int16_t aux;
         int16_t vin;
+        int16_t t_mcu;
     } x6000_adc;
     struct {
         uint8_t highestSub_indexSupported;
@@ -192,6 +231,7 @@ typedef struct {
         int16_t temp;
         int16_t hum;
     } x6103_aht21;
+    uint32_t x7000__obj2;
 } OD_RAM_t;
 
 #ifndef OD_ATTR_PERSIST_COMM
@@ -233,17 +273,22 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1019 &OD->list[17]
 #define OD_ENTRY_H1200 &OD->list[18]
 #define OD_ENTRY_H1280 &OD->list[19]
-#define OD_ENTRY_H1F50 &OD->list[20]
-#define OD_ENTRY_H1F51 &OD->list[21]
-#define OD_ENTRY_H1F56 &OD->list[22]
-#define OD_ENTRY_H1F57 &OD->list[23]
-#define OD_ENTRY_H2000 &OD->list[24]
-#define OD_ENTRY_H6000 &OD->list[25]
-#define OD_ENTRY_H6001 &OD->list[26]
-#define OD_ENTRY_H6100 &OD->list[27]
-#define OD_ENTRY_H6101 &OD->list[28]
-#define OD_ENTRY_H6102 &OD->list[29]
-#define OD_ENTRY_H6103 &OD->list[30]
+#define OD_ENTRY_H1400 &OD->list[20]
+#define OD_ENTRY_H1600 &OD->list[21]
+#define OD_ENTRY_H1800 &OD->list[22]
+#define OD_ENTRY_H1A00 &OD->list[23]
+#define OD_ENTRY_H1F50 &OD->list[24]
+#define OD_ENTRY_H1F51 &OD->list[25]
+#define OD_ENTRY_H1F56 &OD->list[26]
+#define OD_ENTRY_H1F57 &OD->list[27]
+#define OD_ENTRY_H2000 &OD->list[28]
+#define OD_ENTRY_H6000 &OD->list[29]
+#define OD_ENTRY_H6001 &OD->list[30]
+#define OD_ENTRY_H6100 &OD->list[31]
+#define OD_ENTRY_H6101 &OD->list[32]
+#define OD_ENTRY_H6102 &OD->list[33]
+#define OD_ENTRY_H6103 &OD->list[34]
+#define OD_ENTRY_H7000 &OD->list[35]
 
 
 /*******************************************************************************
@@ -269,17 +314,22 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1019_synchronousCounterOverflowValue &OD->list[17]
 #define OD_ENTRY_H1200_SDOServerParameter &OD->list[18]
 #define OD_ENTRY_H1280_SDOClientParameter &OD->list[19]
-#define OD_ENTRY_H1F50_newFirmware &OD->list[20]
-#define OD_ENTRY_H1F51_programControl &OD->list[21]
-#define OD_ENTRY_H1F56_appSoftIdentification &OD->list[22]
-#define OD_ENTRY_H1F57_flashStatusIdentification &OD->list[23]
-#define OD_ENTRY_H2000_errorBits &OD->list[24]
-#define OD_ENTRY_H6000_adc &OD->list[25]
-#define OD_ENTRY_H6001_din &OD->list[26]
-#define OD_ENTRY_H6100_gps &OD->list[27]
-#define OD_ENTRY_H6101_baro &OD->list[28]
-#define OD_ENTRY_H6102_meteo &OD->list[29]
-#define OD_ENTRY_H6103_aht21 &OD->list[30]
+#define OD_ENTRY_H1400_RPDOCommunicationParameter &OD->list[20]
+#define OD_ENTRY_H1600_RPDOMappingParameter &OD->list[21]
+#define OD_ENTRY_H1800_TPDOCommunicationParameter &OD->list[22]
+#define OD_ENTRY_H1A00_TPDOMappingParameter &OD->list[23]
+#define OD_ENTRY_H1F50_newFirmware &OD->list[24]
+#define OD_ENTRY_H1F51_programControl &OD->list[25]
+#define OD_ENTRY_H1F56_appSoftIdentification &OD->list[26]
+#define OD_ENTRY_H1F57_flashStatusIdentification &OD->list[27]
+#define OD_ENTRY_H2000_errorBits &OD->list[28]
+#define OD_ENTRY_H6000_adc &OD->list[29]
+#define OD_ENTRY_H6001_din &OD->list[30]
+#define OD_ENTRY_H6100_gps &OD->list[31]
+#define OD_ENTRY_H6101_baro &OD->list[32]
+#define OD_ENTRY_H6102_meteo &OD->list[33]
+#define OD_ENTRY_H6103_aht21 &OD->list[34]
+#define OD_ENTRY_H7000__obj2 &OD->list[35]
 
 
 /*******************************************************************************
@@ -309,10 +359,10 @@ extern OD_ATTR_OD OD_t *OD;
     (config).ENTRY_H1006 = OD_ENTRY_H1006;\
     (config).ENTRY_H1007 = OD_ENTRY_H1007;\
     (config).ENTRY_H1019 = OD_ENTRY_H1019;\
-    (config).CNT_RPDO = 0;\
+    (config).CNT_RPDO = OD_CNT_RPDO;\
     (config).ENTRY_H1400 = OD_ENTRY_H1400;\
     (config).ENTRY_H1600 = OD_ENTRY_H1600;\
-    (config).CNT_TPDO = 0;\
+    (config).CNT_TPDO = OD_CNT_TPDO;\
     (config).ENTRY_H1800 = OD_ENTRY_H1800;\
     (config).ENTRY_H1A00 = OD_ENTRY_H1A00;\
     (config).CNT_LEDS = 0;\

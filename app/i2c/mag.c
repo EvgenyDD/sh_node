@@ -48,13 +48,11 @@
 #define HMC5883L_SCALE81 7	// +-8.1 Gauss
 #define HMC5883L_SCALE HMC5883L_SCALE88
 
-extern void delay_ms(volatile uint32_t delay_ms);
-
 mag_t mag_data = {0};
 
 static uint32_t tmr_poll = 0;
 
-int mag_is_present(void)
+static int mag_is_present(void)
 {
 	uint8_t mag_status[3];
 	for(uint32_t i = 0; i < 3; i++)

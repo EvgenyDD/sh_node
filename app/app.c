@@ -1,4 +1,3 @@
-
 #include "CANopen.h"
 #include "CO_driver_app.h"
 #include "CO_driver_storage.h"
@@ -137,7 +136,7 @@ void main(void)
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_14 | GPIO_Pin_15;
 	GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-	// GPIOC->BSRR = (1 << 14); // 
+	// GPIOC->BSRR = (1 << 14);
 
 	fw_header_check_all();
 
@@ -166,6 +165,7 @@ void main(void)
 	if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_METEO) meteo_init();
 
 	mag_init();
+
 	for(;;)
 	{
 		LSS_cb_obj_t lss_obj = {.lss_br_set_delay_counter = 0, .co = CO};
@@ -228,6 +228,8 @@ void main(void)
 				uint32_t diff_ms = (time_diff_systick + remain_systick_ms_prev) / (SYSTICK_IN_MS);
 				remain_systick_ms_prev = (time_diff_systick + remain_systick_ms_prev) % SYSTICK_IN_MS;
 
+				platform_watchdog_reset();
+
 				CO_CANinterrupt(CO->CANmodule);
 				reset = CO_process(CO, false, diff_us, NULL);
 				lss_cb_poll(&lss_obj, diff_us);
@@ -245,7 +247,19 @@ void main(void)
 					GPIOD->BSRR = (1 << (1 + 16));
 				}
 
-				adc_track();
+				if(adc_track())
+				{
+					OD_RAM.x6000_adc.ai0 = (int16_t)adc_val.sns_ai[0];
+					OD_RAM.x6000_adc.ai1 = (int16_t)adc_val.sns_ai[1];
+					OD_RAM.x6000_adc.ai2 = (int16_t)adc_val.sns_ai[2];
+					OD_RAM.x6000_adc.ai3 = (int16_t)adc_val.sns_ai[3];
+					OD_RAM.x6000_adc.aux = (int16_t)adc_val.sns_mq2;
+					OD_RAM.x6000_adc.srv = (int16_t)adc_val.srv_pos;
+					OD_RAM.x6000_adc.vin = (int16_t)adc_val.vin;
+					OD_RAM.x6000_adc.i0 = (int16_t)adc_val.sns_i[0];
+					OD_RAM.x6000_adc.i1 = (int16_t)adc_val.sns_i[1];
+					OD_RAM.x6000_adc.t_mcu = (int16_t)adc_val.t_mcu;
+				}
 				if(aht21_data.sensor_present) aht21_poll(diff_ms);
 				if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_OUTDOOR ||
 				   OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_METEO)
@@ -260,9 +274,8 @@ void main(void)
 				else
 				{
 					dsm501_poll(diff_ms);
-					pir_poll(diff_ms);
+					// pir_poll(diff_ms);
 				}
-				platform_watchdog_reset();
 			}
 		}
 
@@ -274,8 +287,8 @@ void main(void)
 	}
 }
 
-void assert_failed(uint8_t *file, uint32_t line)
-{
-	while(1)
-		;
-}
+// void assert_failed(uint8_t *file, uint32_t line)
+// {
+// 	while(1)
+// 		;
+// }

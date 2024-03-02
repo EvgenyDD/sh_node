@@ -2,7 +2,8 @@
 
 void _memcpy(void *dest, const void *src, size_t n)
 {
-    const char *csrc = (const char *)src;
-    char *cdest = (char *)dest;
-    for (volatile int i=0; i<n; i++) cdest[i] = csrc[i];
+	const char *csrc = (const char *)src;
+	char *cdest = (char *)dest;
+	for(volatile size_t i = 0; i < n; i++)
+		cdest[i] = csrc[i];
 }

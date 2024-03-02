@@ -16,12 +16,12 @@ static int flash_wait_op(void)
 	if(FLASH->SR & FLASH_SR_WRPRTERR)
 	{
 		FLASH->SR = FLASH_SR_WRPRTERR;
-		error = 5;
+		error = 4;
 	}
 	if(FLASH->SR & FLASH_SR_PGERR)
 	{
 		FLASH->SR = FLASH_SR_PGERR;
-		error = 6;
+		error = 5;
 	}
 
 	return error;
@@ -33,7 +33,7 @@ static int erase_page(uint32_t dest)
 	FLASH->AR = dest;
 	FLASH->CR |= FLASH_CR_STRT;
 	int sts = flash_wait_op();
-	FLASH->CR &= ~(FLASH_CR_PER);
+	FLASH->CR &= (uint32_t) ~(FLASH_CR_PER);
 	return sts;
 }
 
@@ -63,39 +63,45 @@ int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz, bool er
 	if(sz == 0) return 0;
 	if(sz & 1) return 1; // program only by half-word
 
-	uint32_t page = (dest - FLASH_BASE) / PAGE_SIZE;
-	if(page > sizeof(page_erased_bits)) return 2;
-
 	platform_flash_unlock();
-	if(page_erased_bits[page] == 0 && erase_sectors)
-	{
-		if(erase_page(dest))
-		{
-			platform_flash_lock();
-			return 3;
-		}
-		page_erased_bits[page] = 1;
-	}
-
-	int sts = flash_wait_op();
-	if(sts)
-	{
-		platform_flash_lock();
-		return sts;
-	}
-
-	FLASH->SR = FLASH_SR_EOP | FLASH_SR_WRPRTERR | FLASH_SR_PGERR;
 
 	uint16_t halfword;
+	uint32_t page;
 	for(volatile uint32_t i = 0; i < (sz >> 1U); i++)
 	{
+		page = (dest - FLASH_BASE) / PAGE_SIZE;
+		if(page > sizeof(page_erased_bits))
+		{
+			platform_flash_lock();
+			return 2;
+		}
+
+		if(page_erased_bits[page] == 0 && erase_sectors)
+		{
+			if(erase_page(dest))
+			{
+				platform_flash_lock();
+				return 3;
+			}
+			page_erased_bits[page] = 1;
+		}
+
+		int sts = flash_wait_op();
+		if(sts)
+		{
+			platform_flash_lock();
+			return sts;
+		}
+
+		FLASH->SR = FLASH_SR_EOP | FLASH_SR_WRPRTERR | FLASH_SR_PGERR;
+
 		FLASH->CR |= FLASH_CR_PG;
 
 		_memcpy(&halfword, &src[i << 1U], 2);
 		*(__IO uint16_t *)(dest + (i << 1U)) = halfword;
 
 		sts = flash_wait_op();
-		FLASH->CR &= ~(FLASH_CR_PG);
+		FLASH->CR &= (uint32_t) ~(FLASH_CR_PG);
 		if(sts)
 		{
 			platform_flash_lock();
@@ -105,7 +111,7 @@ int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz, bool er
 		if(*(__IO uint16_t *)(dest + (i << 1U)) != halfword)
 		{
 			platform_flash_lock();
-			return 5;
+			return 6;
 		}
 	}
 	platform_flash_lock();
@@ -131,7 +137,7 @@ void platform_deinit(void)
 	__enable_irq();
 }
 
-void platform_reset(void)
+__attribute__((noreturn)) void platform_reset(void)
 {
 	platform_deinit();
 	NVIC_SystemReset();

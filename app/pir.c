@@ -1,4 +1,5 @@
 #include "platform.h"
+#include "pir.h"
 
 #define TO_ms 10000
 

@@ -35,7 +35,7 @@ uint8_t g_active_can_node_id = 127;		  // CO_LSS_NODE_ID_ASSIGNMENT;			/* Copied
 static uint8_t pending_can_node_id = 127; // CO_LSS_NODE_ID_ASSIGNMENT; /* read from dip switches or nonvolatile memory, configurable by LSS slave */
 static uint16_t pending_can_baud = 500;	  /* read from dip switches or nonvolatile memory, configurable by LSS slave */
 
-static volatile int boot_delay = BOOT_DELAY;
+static volatile uint32_t boot_delay = BOOT_DELAY;
 static int32_t prev_systick = 0;
 
 config_entry_t g_device_config[] = {
@@ -62,31 +62,22 @@ void main(void)
 {
 	RCC->CR |= (uint32_t)0x00000001;
 
-	/* Enable Prefetch Buffer */
-	FLASH->ACR |= FLASH_ACR_PRFTBE;
+	FLASH->ACR |= FLASH_ACR_PRFTBE; /* Enable Prefetch Buffer */
 
 	/* Flash 2 wait state */
 	FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
 	FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;
 
-	/* HCLK = SYSCLK */
-	RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;
-
-	/* PCLK2 = HCLK */
-	RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE2_DIV1;
-
-	/* PCLK1 = HCLK */
-	RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2;
+	RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;	/* HCLK = SYSCLK */
+	RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE2_DIV1; /* PCLK2 = HCLK */
+	RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2; /* PCLK1 = HCLK */
 
 	/*  PLL configuration: PLLCLK = HSI/2 * 16 = 64 MHz */
 	RCC->CFGR &= (uint32_t)((uint32_t) ~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
 	RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSI_Div2 | RCC_CFGR_PLLMULL16);
 
-	/* Enable PLL */
-	RCC->CR |= RCC_CR_PLLON;
-
-	/* Wait till PLL is ready */
-	while((RCC->CR & RCC_CR_PLLRDY) == 0)
+	RCC->CR |= RCC_CR_PLLON;			  /* Enable PLL */
+	while((RCC->CR & RCC_CR_PLLRDY) == 0) /* Wait till PLL is ready */
 	{
 	}
 
@@ -192,6 +183,9 @@ void main(void)
 				CO_CANinterrupt(CO->CANmodule);
 				reset = CO_process(CO, false, diff_us, NULL);
 				lss_cb_poll(&lss_obj, diff_us);
+
+				platform_watchdog_reset();
+
 				if(!boot_delay &&
 				   !g_stay_in_boot &&
 				   g_fw_info[FW_APP].locked == false)
@@ -215,7 +209,6 @@ void main(void)
 				{
 					GPIOD->BSRR = (1 << 17);
 				}
-				platform_watchdog_reset();
 			}
 		}
 
@@ -227,8 +220,8 @@ void main(void)
 	}
 }
 
-void assert_failed(uint8_t *file, uint32_t line)
-{
-	while(1)
-		;
-}
+// void assert_failed(uint8_t *file, uint32_t line)
+// {
+// 	while(1)
+// 		;
+// }

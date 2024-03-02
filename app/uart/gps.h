@@ -59,11 +59,12 @@ typedef union
 		uint32_t confirmed_avai : 1;
 		uint32_t confirmed_date : 1;
 		uint32_t confirmed_time : 1;
-	};
+	} s;
 	uint32_t word;
 } gps_flags_t;
 
 void gps_init(void);
 void gps_poll(void);
+void gps_parse(char c);
 
 #endif // GPS_H__

@@ -1,3 +1,4 @@
+#include "i2c_common.h"
 #include "stm32f10x.h"
 
 // https://github.com/meng4036/stm32_i2c/tree/ad7ab7ccd97991d0bd0be7dc739f7a015afeb25b
@@ -46,7 +47,7 @@ void i2c_common_init(void)
 static __inline void I2C_PullDownSCL(void)
 {
 	GPIOB->BRR = GPIO_Pin_8;
-	GPIOB->CRH &= ~(1 << 3); // PB8
+	GPIOB->CRH &= (uint32_t) ~(1 << 3); // PB8
 }
 
 static __inline void I2C_ReleaseSCL(void)
@@ -64,23 +65,23 @@ static __inline void I2C_ReleaseSCL(void)
 		;                                            \
 	if(time == 0) return (c)
 
-int eeprom_write_byte(uint8_t addr, uint16_t reg, uint8_t data)
-{
-	I2C_GenerateSTART(I2C1, ENABLE);											  // start
-	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT) == ERROR, -5); // EVENT 5
+// int eeprom_write_byte(uint8_t addr, uint16_t reg, uint8_t data)
+// {
+// 	I2C_GenerateSTART(I2C1, ENABLE);											  // start
+// 	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT) == ERROR, -5); // EVENT 5
 
-	I2C_Send7bitAddress(I2C1, addr << 1, I2C_Direction_Transmitter);							// send address
-	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) == ERROR, -6); // EVENT 6
+// 	I2C_Send7bitAddress(I2C1, addr << 1, I2C_Direction_Transmitter);							// send address
+// 	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) == ERROR, -6); // EVENT 6
 
-	I2C_SendData(I2C1, reg);														   // send eeprom reg
-	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == ERROR, -8); // EVENT 8
+// 	I2C_SendData(I2C1, reg);														   // send eeprom reg
+// 	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == ERROR, -8); // EVENT 8
 
-	I2C_SendData(I2C1, data);														   // send data
-	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == ERROR, -8); // EVENT 8
+// 	I2C_SendData(I2C1, data);														   // send data
+// 	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == ERROR, -8); // EVENT 8
 
-	I2C_GenerateSTOP(I2C1, ENABLE); // stop
-	return 0;
-}
+// 	I2C_GenerateSTOP(I2C1, ENABLE); // stop
+// 	return 0;
+// }
 
 int i2c_common_write_to_read(uint8_t addr, uint16_t reg, uint8_t *data, uint16_t size)
 {

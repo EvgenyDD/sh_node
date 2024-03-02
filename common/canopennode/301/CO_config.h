@@ -31,8 +31,6 @@ extern "C"
 {
 #endif
 
-#include "co_config_system.h"
-
 /**
  * @defgroup CO_STACK_CONFIG Stack configuration
  * Stack configuration and enabling macros.
@@ -219,12 +217,6 @@ extern "C"
 #define CO_CONFIG_EM_HISTORY 0x08
 #define CO_CONFIG_EM_STATUS_BITS 0x10
 #define CO_CONFIG_EM_CONSUMER 0x20
-
-#define CO_CONFIG_EM (CO_CONFIG_EM_PRODUCER |              \
-					  CO_CONFIG_EM_HISTORY |               \
-					  CO_CONFIG_GLOBAL_FLAG_CALLBACK_PRE | \
-					  CO_CONFIG_GLOBAL_FLAG_TIMERNEXT |    \
-					  CO_CONFIG_EM_STATUS_BITS)
 
 /**
  * Maximum number of @ref CO_EM_errorStatusBits_t

@@ -1,7 +1,7 @@
 #include "aht21.h"
 #include "CANopen.h"
-#include "i2c_common.h"
 #include "OD.h"
+#include "i2c_common.h"
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -68,12 +68,12 @@ int aht21_poll(uint32_t diff_ms)
 		if((data[0] & (1 << 7)) == 0)
 		{
 			is_wait_conv = false;
-			uint32_t var = ((data[1] << 16) | (data[2] << 8) | data[3]) >> 4;
-			aht21_data.hum_0_1perc = (var * 125) >> 17;
+			uint32_t var = (uint32_t)((data[1] << 16UL) | (data[2] << 8UL) | data[3]) >> 4UL;
+			aht21_data.hum_0_1perc = (int32_t)((var * 125u) >> 17u);
 			OD_RAM.x6103_aht21.hum = aht21_data.hum_0_1perc;
 
-			var = ((data[3] & 0x0F) << 16) | (data[4] << 8) | data[5];
-			aht21_data.temp_0_1C =var *200*10/1024/1024-500;
+			var = (uint32_t)((data[3] & 0x0F) << 16u) | (data[4] << 8u) | data[5];
+			aht21_data.temp_0_1C = (int32_t)var * 200 * 10 / 1024 / 1024 - 500;
 			OD_RAM.x6103_aht21.temp = aht21_data.temp_0_1C;
 		}
 		return sts;
