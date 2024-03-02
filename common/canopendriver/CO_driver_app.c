@@ -82,4 +82,6 @@ void co_od_init_headers(void)
 	}
 }
 
+#if FW_TYPE == FW_APP
 bool co_is_master_timeout(void) { return CO->HBcons->monitoredNodes[0].HBstate != CO_HBconsumer_ACTIVE; }
+#endif
