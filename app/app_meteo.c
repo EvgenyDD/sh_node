@@ -49,7 +49,6 @@ void meteo_poll(uint32_t diff_ms)
 	OD_RAM.x6102_meteo.wind_acc += deb_wind.pressed_shot ? 1 : 0;
 	OD_RAM.x6102_meteo.rain_acc += deb_rain.pressed_shot ? 1 : 0;
 	OD_RAM.x6102_meteo.solar = (int16_t)adc_val.sns_ai[0];
-	OD_RAM.x6102_meteo.rain_temp = (int16_t)ntc10k_adc_to_degc(adc_val.sns_ai[1]);
 
 	// determine heading
 	const int16_t v = (int16_t)adc_val.sns_ai[2];

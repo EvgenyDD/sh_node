@@ -259,6 +259,8 @@ void main(void)
 					OD_RAM.x6000_adc.i0 = (int16_t)adc_val.sns_i[0];
 					OD_RAM.x6000_adc.i1 = (int16_t)adc_val.sns_i[1];
 					OD_RAM.x6000_adc.t_mcu = (int16_t)adc_val.t_mcu;
+
+					OD_RAM.x6102_meteo.rain_temp = (int16_t)ntc10k_adc_to_degc(adc_val.sns_ai[1]);
 				}
 				if(aht21_data.sensor_present) aht21_poll(diff_ms);
 				if(OD_PERSIST_COMM.x1000_deviceType == ND_ROLE_OUTDOOR ||

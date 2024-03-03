@@ -28,8 +28,8 @@ enum
 // #define current_scale (v_ref / (adc_max_cnt * 0.020f * 50.0f))
 #define current_scale_10ma 1 / 1241
 
-// #define voltage_scale_10mv v_ref / adc_max_cnt * (1.0f + 105.0f / 13.7f)
-#define voltage_scale_10mv 1000 / 143222
+// #define voltage_scale_10mv v_ref / adc_max_cnt * (1.0f + 105.0f / 13.7f) * 100
+#define voltage_scale_10mv 100000 / 143222
 
 adc_val_t adc_val = {0};
 
@@ -143,6 +143,6 @@ int32_t ntc10k_adc_to_degc(int32_t adc_norm)
 	int32_t idx = CLIP(inp_dx, 0, n - 2);
 	int32_t dy = ntc10k_t[idx + 1] - ntc10k_t[idx];
 
-	int32_t res = (ntc10k_t[idx] + (adc_norm * (n - 1) - idx * 4095) * dy / 4095) / 1000;
+	int32_t res = (ntc10k_t[idx] + (adc_norm * (n - 1) - idx * 4095) * dy / 4095) / 100;
 	return res;
 }
