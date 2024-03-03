@@ -190,6 +190,12 @@ OD_ATTR_RAM OD_RAM_t OD_RAM = {
         .temp = 0,
         .hum = 0
     },
+    .x6104_mag = {
+        .highestSub_indexSupported = 0x03,
+        .field_x = 0,
+        .field_y = 0,
+        .field_z = 0
+    },
     .x7000__obj2 = 0x00000000
 };
 
@@ -234,6 +240,7 @@ typedef struct {
     OD_obj_record_t o_6101_baro[3];
     OD_obj_record_t o_6102_meteo[15];
     OD_obj_record_t o_6103_aht21[3];
+    OD_obj_record_t o_6104_mag[4];
     OD_obj_var_t o_7000__obj2;
 } ODObjs_t;
 
@@ -1049,6 +1056,32 @@ static CO_PROGMEM ODObjs_t ODObjs = {
             .dataLength = 2
         }
     },
+    .o_6104_mag = {
+        {
+            .dataOrig = &OD_RAM.x6104_mag.highestSub_indexSupported,
+            .subIndex = 0,
+            .attribute = ODA_SDO_R,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6104_mag.field_x,
+            .subIndex = 1,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6104_mag.field_y,
+            .subIndex = 2,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6104_mag.field_z,
+            .subIndex = 3,
+            .attribute = ODA_SDO_RW | ODA_MB,
+            .dataLength = 2
+        }
+    },
     .o_7000__obj2 = {
         .dataOrig = &OD_RAM.x7000__obj2,
         .attribute = ODA_SDO_RW | ODA_MB,
@@ -1096,6 +1129,7 @@ static OD_ATTR_OD OD_entry_t ODList[] = {
     {0x6101, 0x03, ODT_REC, &ODObjs.o_6101_baro, NULL},
     {0x6102, 0x0F, ODT_REC, &ODObjs.o_6102_meteo, NULL},
     {0x6103, 0x03, ODT_REC, &ODObjs.o_6103_aht21, NULL},
+    {0x6104, 0x04, ODT_REC, &ODObjs.o_6104_mag, NULL},
     {0x7000, 0x01, ODT_VAR, &ODObjs.o_7000__obj2, NULL},
     {0x0000, 0x00, 0, NULL, NULL}
 };

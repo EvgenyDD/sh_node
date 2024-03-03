@@ -16,7 +16,7 @@
 
         Created:      23/11/2020 13:00:00
         Created By:   
-        Modified:     02/03/2024 21:55:56
+        Modified:     03/03/2024 22:59:15
         Modified By:  
 
     Device Info:
@@ -231,6 +231,12 @@ typedef struct {
         int16_t temp;
         int16_t hum;
     } x6103_aht21;
+    struct {
+        uint8_t highestSub_indexSupported;
+        int16_t field_x;
+        int16_t field_y;
+        int16_t field_z;
+    } x6104_mag;
     uint32_t x7000__obj2;
 } OD_RAM_t;
 
@@ -288,7 +294,8 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H6101 &OD->list[32]
 #define OD_ENTRY_H6102 &OD->list[33]
 #define OD_ENTRY_H6103 &OD->list[34]
-#define OD_ENTRY_H7000 &OD->list[35]
+#define OD_ENTRY_H6104 &OD->list[35]
+#define OD_ENTRY_H7000 &OD->list[36]
 
 
 /*******************************************************************************
@@ -329,7 +336,8 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H6101_baro &OD->list[32]
 #define OD_ENTRY_H6102_meteo &OD->list[33]
 #define OD_ENTRY_H6103_aht21 &OD->list[34]
-#define OD_ENTRY_H7000__obj2 &OD->list[35]
+#define OD_ENTRY_H6104_mag &OD->list[35]
+#define OD_ENTRY_H7000__obj2 &OD->list[36]
 
 
 /*******************************************************************************

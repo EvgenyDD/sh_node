@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="13:00:00.0000000+02:00" fileModifiedBy="" fileModificationDate="2024-03-02" fileModificationTime="21:55:56.7423056+02:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="13:00:00.0000000+02:00" fileModifiedBy="" fileModificationDate="2024-03-03" fileModificationTime="22:59:15.5542837+02:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Home</q1:vendorName>
         <q1:vendorID></q1:vendorID>
@@ -861,6 +861,20 @@
               <INT />
             </q1:varDeclaration>
             <q1:varDeclaration name="hum" uniqueID="UID_RECSUB_610302">
+              <INT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="mag" uniqueID="UID_REC_6104">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_610400">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="field_x" uniqueID="UID_RECSUB_610401">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="field_y" uniqueID="UID_RECSUB_610402">
+              <INT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="field_z" uniqueID="UID_RECSUB_610403">
               <INT />
             </q1:varDeclaration>
           </q1:struct>
@@ -2970,6 +2984,30 @@
             <INT />
             <q1:defaultValue value="0" />
           </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6104">
+            <label lang="en">mag</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_6104" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610400">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x03" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610401" access="readWrite">
+            <label lang="en">field_x</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610402" access="readWrite">
+            <label lang="en">field_y</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610403" access="readWrite">
+            <label lang="en">field_z</label>
+            <INT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
           <q1:parameter uniqueID="UID_OBJ_7000" access="readWrite">
             <label lang="en">_obj2</label>
             <UDINT />
@@ -2992,7 +3030,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="13:00:00.0000000+02:00" fileModificationDate="2024-03-02" fileModificationTime="21:55:56.7423056+02:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="13:00:00.0000000+02:00" fileModificationDate="2024-03-03" fileModificationTime="22:59:15.5542837+02:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />
@@ -3408,6 +3446,12 @@
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610300" />
             <CANopenSubObject subIndex="01" name="temp" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610301" />
             <CANopenSubObject subIndex="02" name="hum" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610302" />
+          </CANopenObject>
+          <CANopenObject index="6104" name="mag" objectType="9" uniqueIDRef="UID_OBJ_6104" subNumber="4">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610400" />
+            <CANopenSubObject subIndex="01" name="field_x" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610401" />
+            <CANopenSubObject subIndex="02" name="field_y" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610402" />
+            <CANopenSubObject subIndex="03" name="field_z" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610403" />
           </CANopenObject>
           <CANopenObject index="7000" name="_obj2" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_7000" />
         </q2:CANopenObjectList>

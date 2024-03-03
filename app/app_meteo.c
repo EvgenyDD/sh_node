@@ -38,7 +38,13 @@ void meteo_poll(uint32_t diff_ms)
 	debounce_cb(&deb_wind, !(GPIOB->IDR & (1 << 10)), diff_ms);
 	debounce_cb(&deb_rain, !(GPIOB->IDR & (1 << 11)), diff_ms);
 	gps_poll();
-	if(mag_data.sensor_present) mag_poll(diff_ms);
+	if(mag_data.sensor_present)
+	{
+		mag_poll(diff_ms);
+		OD_RAM.x6104_mag.field_x = mag_data.mag_field[0];
+		OD_RAM.x6104_mag.field_y = mag_data.mag_field[1];
+		OD_RAM.x6104_mag.field_z = mag_data.mag_field[2];
+	}
 
 	OD_RAM.x6102_meteo.wind_acc += deb_wind.pressed_shot ? 1 : 0;
 	OD_RAM.x6102_meteo.rain_acc += deb_rain.pressed_shot ? 1 : 0;
