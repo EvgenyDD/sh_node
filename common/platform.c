@@ -176,3 +176,8 @@ void platform_watchdog_init(void)
 	IWDG_ReloadCounter();
 	IWDG_Enable();
 }
+
+void _lseek_r(void) {}
+void _close_r(void) {}
+void _read_r(void) {}
+void _write_r(void) {}

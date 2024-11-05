@@ -164,7 +164,7 @@ int i2c_common_write_to_read(uint8_t addr, uint16_t reg, uint8_t *data, uint16_t
 
 		I2C_PullDownSCL();
 
-		I2C1->CR1 &= ~0x0800;
+		I2C1->CR1 &= (uint32_t)~0x0800;
 		I2C_AcknowledgeConfig(I2C1, ENABLE);
 		I2C_GenerateSTOP(I2C1, ENABLE);
 		data[i++] = I2C_ReceiveData(I2C1);
@@ -265,7 +265,7 @@ int i2c_common_read(uint8_t addr, uint8_t *data, uint16_t size)
 
 		I2C_PullDownSCL();
 
-		I2C1->CR1 &= ~0x0800;
+		I2C1->CR1 &= (uint32_t)~0x0800;
 		I2C_AcknowledgeConfig(I2C1, ENABLE);
 		I2C_GenerateSTOP(I2C1, ENABLE);
 		data[i++] = I2C_ReceiveData(I2C1);

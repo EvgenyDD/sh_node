@@ -44,6 +44,11 @@ static inline void platform_watchdog_reset(void) { IWDG_ReloadCounter(); }
 
 const char *paltform_reset_cause_get(void);
 
+void _lseek_r(void);
+void _close_r(void);
+void _read_r(void);
+void _write_r(void);
+
 void USART1_IRQHandler(void);
 
 extern int __preldr_start, __preldr_end;
