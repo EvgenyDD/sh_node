@@ -67,11 +67,15 @@ $(BINARY_SIGNED): $(BINARY) $(SIGN)
 #####################
 
 flash: $(BINARY_SIGNED)
-	openocd -d0 -f ../target/stm32_f103.cfg -c "program $< 0x08000000 verify reset exit" 
+	@openocd -d0 -f ../target/stm32_f103.cfg -c "program $< 0x08000000 verify reset exit" 
+
+ds:
+	@openocd -d0 -f ../target/stm32_f103.cfg
 
 debug:
+	@set _NO_DEBUG_HEAP=1
 	@echo "file $(EXECUTABLE)" > .gdbinit
 	@echo "set auto-load safe-path /" >> .gdbinit
 	@echo "set confirm off" >> .gdbinit
-	@echo "target remote | openocd -c \"gdb_port pipe\" -f ../target/stm32_f103.cfg" >> .gdbinit
+	@echo "target extended-remote :3333" >> .gdbinit
 	@arm-none-eabi-gdb -q -x .gdbinit

@@ -4,14 +4,6 @@
 
 #define _INAK_TIMEOUT ((uint32_t)0x00FFFFFF)
 
-static void delay(volatile uint32_t d)
-{
-	for(; d--;)
-	{
-		asm("nop");
-	}
-}
-
 void can_drv_init(CAN_TypeDef *dev)
 {
 	RCC->APB1ENR |= RCC_APB1ENR_CAN1EN;

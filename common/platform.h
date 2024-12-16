@@ -15,11 +15,17 @@
 #define FLASH_FINISH (FLASH_BASE + FLASH_LEN)
 #define FLASH_SIZE FLASH_LEN
 
-#define PIN_SET(x) x##_GPIO_Port->BSRR = x##_Pin
-#define PIN_CLR(x) x##_GPIO_Port->BSRR = ((uint32_t)(x##_Pin)) << 16
-#define PIN_WR(x, v) x##_GPIO_Port->BSRR = ((uint32_t)(x##_Pin)) << ((!(v)) * 16)
-#define PIN_GET(x) !!(x##_GPIO_Port->IDR & x##_Pin)
-#define PIN_GET_ODR(x) !!(x##_GPIO_Port->ODR & x##_Pin)
+#define PIN_SET_(x, y) x->BSRR = (1 << y)
+#define PIN_RST_(x, y) x->BSRR = ((uint32_t)((1 << y))) << 16
+#define PIN_WR_(x, y, v) x->BSRR = ((uint32_t)((1 << y))) << ((!(v)) * 16)
+#define PIN_GET_(x, y) !!(x->IDR & (1 << y))
+#define PIN_GET_ODR_(x, y) !!(x->ODR & (1 << y))
+
+#define PIN_SET(x) x##_Port->BSRR = x##_Pin
+#define PIN_RST(x) x##_Port->BSRR = ((uint32_t)(x##_Pin)) << 16
+#define PIN_WR(x, v) x##_Port->BSRR = ((uint32_t)(x##_Pin)) << ((!(v)) * 16)
+#define PIN_GET(x) !!(x##_Port->IDR & x##_Pin)
+#define PIN_GET_ODR(x) !!(x##_Port->ODR & x##_Pin)
 
 #define UNIQUE_ID 0x1FFFF7E8
 
