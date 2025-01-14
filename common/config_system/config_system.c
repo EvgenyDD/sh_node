@@ -6,15 +6,11 @@
 
 __attribute__((weak)) void config_entry_not_found_callback(const uint8_t *key, uint32_t data_offset, uint16_t data_length) {}
 
-#define CFG_ORIGIN ((uint32_t) & __cfg_start)
-#define CFG_END ((uint32_t) & __cfg_end)
-#define CFG_SIZE (CFG_END - CFG_ORIGIN)
-
-#define DATA_OFFSET 4
+#define CFG_WRITE_ALIGN 4
 
 static bool config_valid = false;
 
-static uint8_t flush_buffer[32]; // must be multiple of 4 (cause of CRC)
+static uint8_t flush_buffer[CFG_WRITE_ALIGN * 8]; // must be multiple of 4 (cause of CRC32)
 static uint32_t flush_buffer_size = 0;
 
 static uint32_t offset_write_data = 0;
@@ -50,7 +46,7 @@ static config_sts_t flush_data_calc_crc(const uint8_t *data, uint32_t size, bool
 		if(flush_buffer_size >= sizeof(flush_buffer) ||
 		   (i == size - 1 && flush_all))
 		{
-			if(platform_flash_write(CFG_ORIGIN + offset_write_data, flush_buffer, flush_buffer_size, true)) return CONFIG_STS_STORAGE_WRITE_ERROR;
+			if(platform_flash_write(CFG_ORIGIN + offset_write_data, flush_buffer, flush_buffer_size)) return CONFIG_STS_STORAGE_WRITE_ERROR;
 			offset_write_data += flush_buffer_size;
 			crc32_end(flush_buffer, flush_buffer_size);
 			flush_buffer_size = 0;
@@ -95,20 +91,20 @@ config_sts_t config_write_storage(void)
 		}
 
 		uint32_t count_zeros = 0;
-		if(size_config_data & 0x03)
+		if((8 + size_config_data) & (CFG_WRITE_ALIGN - 1))
 		{
-			count_zeros = 4 - (size_config_data % 4);
+			count_zeros = CFG_WRITE_ALIGN - ((8 + size_config_data) % CFG_WRITE_ALIGN);
 			size_config_data += count_zeros;
 		}
+		if(4 /* size field */ + size_config_data + 4 /* CRC */ > CFG_SIZE) return CONFIG_STS_STORAGE_OUT_OF_BOUNDS;
 
 		// Now write data
 		platform_flash_erase_flag_reset_sect_cfg();
-		if(platform_flash_write(CFG_ORIGIN, (uint8_t *)&size_config_data, sizeof(uint32_t), true)) return CONFIG_STS_STORAGE_WRITE_ERROR;
-		offset_write_data = sizeof(uint32_t);
-		crc32_start((uint8_t *)&size_config_data, sizeof(uint32_t));
-
+		crc32_start(NULL, 0);
 		flush_buffer_size = 0;
-		config_sts_t sts;
+		offset_write_data = 0;
+		config_sts_t sts = flush_data_calc_crc((const uint8_t *)&size_config_data, sizeof(uint32_t), false);
+		if(sts) return sts;
 		for(uint32_t i = 0; i < g_device_config_count; i++)
 		{
 			sts = flush_data_calc_crc((const uint8_t *)g_device_config[i].key, strlen(g_device_config[i].key) + 1, false);
@@ -159,7 +155,7 @@ config_sts_t config_write_storage(void)
 		// first calc (new) total size & check it will fit the FLASH
 		for(uint32_t offset_buf = 4; offset_buf < old_data_size + 4;)
 		{
-			const char *entry_name = &buf_old_data[offset_buf];
+			const char *entry_name = (const char *)&buf_old_data[offset_buf];
 			if(*entry_name == 0)
 			{
 				offset_buf++;
@@ -184,26 +180,25 @@ config_sts_t config_write_storage(void)
 		}
 
 		uint32_t count_zeros = 0;
-		if(size_config_data & 0x03)
+		if((8 + size_config_data) & (CFG_WRITE_ALIGN - 1))
 		{
-			count_zeros = 4 - (size_config_data % 4);
+			count_zeros = CFG_WRITE_ALIGN - ((8 + size_config_data) % CFG_WRITE_ALIGN);
 			size_config_data += count_zeros;
 		}
 		if(4 /* size field */ + size_config_data + 4 /* CRC */ > CFG_SIZE) return CONFIG_STS_STORAGE_OUT_OF_BOUNDS;
 
 		// Now write data
 		platform_flash_erase_flag_reset_sect_cfg();
-		if(platform_flash_write(CFG_ORIGIN, (uint8_t *)&size_config_data, sizeof(uint32_t), true)) return CONFIG_STS_STORAGE_WRITE_ERROR;
-		offset_write_data = sizeof(uint32_t);
-		crc32_start((uint8_t *)&size_config_data, sizeof(uint32_t));
-
+		crc32_start(NULL, 0);
 		flush_buffer_size = 0;
-		config_sts_t sts;
+		offset_write_data = 0;
+		config_sts_t sts = flush_data_calc_crc((const uint8_t *)&size_config_data, sizeof(uint32_t), false);
+		if(sts) return sts;
 
 		// write non-native entries
 		for(uint32_t offset_buf = 4; offset_buf < old_data_size + 4;)
 		{
-			char *entry_name = &buf_old_data[offset_buf];
+			const char *entry_name = (const char *)&buf_old_data[offset_buf];
 			if(*entry_name == 0)
 			{
 				offset_buf++;
@@ -332,17 +327,16 @@ config_sts_t config_validate(void)
 	platform_flash_read(CFG_ORIGIN, (uint8_t *)&size_config, sizeof(size_config));
 	crc32_start((uint8_t *)&size_config, sizeof(uint32_t));
 
-	const uint32_t offset_data = 4;
-	const uint32_t end_data = DATA_OFFSET + size_config;
+	const uint32_t end_data = 4 + size_config;
 
 	if(size_config < (8) /* minimal data */ ||
-	   size_config > DATA_OFFSET + CFG_SIZE + 4 ||
+	   size_config > 4 + CFG_SIZE + 4 ||
 	   (size_config & 0x03U) /* not the multiple of 4 */) return CONFIG_STS_WRONG_SIZE_CONFIG;
 
 	uint32_t crc_calc = 0;
 	for(uint32_t i = 0, word; i < size_config; i += 4)
 	{
-		platform_flash_read(CFG_ORIGIN + DATA_OFFSET + i, (uint8_t *)&word, sizeof(uint32_t));
+		platform_flash_read(CFG_ORIGIN + 4 + i, (uint8_t *)&word, sizeof(uint32_t));
 		crc_calc = crc32_end((uint8_t *)&word, sizeof(uint32_t));
 	}
 
@@ -352,7 +346,7 @@ config_sts_t config_validate(void)
 
 	memset(&parser, 0, sizeof(parser));
 
-	uint32_t offset_read = DATA_OFFSET;
+	uint32_t offset_read = 4;
 	for(;;)
 	{
 		uint32_t size = BUFFER_SIZE;
@@ -390,4 +384,15 @@ void config_read_storage(void)
 			platform_flash_read(g_device_config[i].data_abs_address, g_device_config[i].data, g_device_config[i].size);
 		}
 	}
+}
+
+/**
+ * @brief Get config section size
+ *
+ */
+uint32_t config_get_size(void)
+{
+	uint32_t size_config;
+	platform_flash_read(CFG_ORIGIN, (uint8_t *)&size_config, sizeof(size_config));
+	return size_config + 8;
 }

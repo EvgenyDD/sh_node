@@ -58,7 +58,7 @@ void platform_flash_lock(void)
 	FLASH->CR |= CR_LOCK_Set;
 }
 
-int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz, bool erase_sectors)
+int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz)
 {
 	if(sz == 0) return 0;
 	if(sz & 1) return 1; // program only by half-word
@@ -76,7 +76,7 @@ int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz, bool er
 			return 2;
 		}
 
-		if(page_erased_bits[page] == 0 && erase_sectors)
+		if(page_erased_bits[page] == 0)
 		{
 			if(erase_page(dest))
 			{

@@ -35,7 +35,7 @@ void platform_flash_erase_flag_reset_sect_cfg(void);
 void platform_flash_unlock(void);
 void platform_flash_lock(void);
 int platform_flash_read(uint32_t addr, uint8_t *src, uint32_t sz);
-int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz, bool erase_sectors);
+int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz);
 
 void platform_deinit(void);
 void platform_reset(void);

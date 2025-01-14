@@ -135,7 +135,7 @@ static ODR_t flash_data_cb(OD_stream_t *stream, const void *buf, OD_size_t count
 	}
 
 	if(block_num == 0) platform_flash_erase_flag_reset();
-	int sts_flash = platform_flash_write(base_offset + block_address, &(((const uint8_t *)buf)[BLCK_OFF_DATA]), block_size_data, true);
+	int sts_flash = platform_flash_write(base_offset + block_address, &(((const uint8_t *)buf)[BLCK_OFF_DATA]), block_size_data);
 	if(sts_flash)
 	{
 		OD_RAM.x1F57_flashStatusIdentification.error = CO_SDO_FLASHER_R_WRITE;

@@ -1,5 +1,5 @@
 #######################################
-#           VERSION 2.1
+#           VERSION 3.0
 # #####       Manual:             #####
 #
 # 	EXE_NAME=my_prj
@@ -15,7 +15,9 @@
 # 
 # 	BUILDDIR = build
 # 
-#   EXT_LIBS+=setupapi
+#   ifneq (,$(findstring Windows,$(OS)))
+#     EXT_LIBS += setupapi
+#   endif
 #   LIBDIR+=
 #
 # 	FOREIGN_MAKE_TARGETS=extlib/build/libext.so
@@ -114,15 +116,16 @@ SELFDEP +=Makefile
 #######################################
 # C/C++ flags tuning
 #######################################
-FLAGS=-c -Wall
+FLAGS+=-c -Wall
 
 ifneq ($(CDIALECT),)
 FLAGS+=-O$(OPT_LVL)
 endif
 
-FLAGS+=$(DBG_OPTS)
+FLAGS+=$(DBG_OPTS) 
 FLAGS+=-MMD -MP 
 FLAGS+=$(MCPU) $(addprefix -I,$(INCDIR)) $(addprefix -D,$(PPDEFS)) 
+RCFLAGS+=$(addprefix --include,$(RCDEFS))
 
 ifneq ($(CDIALECT),)
 CFLAGS+=-std=$(CDIALECT)
@@ -157,9 +160,13 @@ S_SOURCES:=$(filter %.s %.S, $(SOURCES))
 S_OBJECTS:=$(S_SOURCES:.s=.o)
 S_OBJECTS:=$(S_OBJECTS:.S=.o)
 
+RC_SOURCES:=$(filter %.rc, $(SOURCES))
+RC_OBJECTS:=$(RC_SOURCES:.rc=.o)
+
 CXX_OBJECTS:=$(subst ..,$(UPDIR),$(addprefix $(OBJDIR)/, $(CXX_OBJECTS)))
 C_OBJECTS:=$(subst ..,$(UPDIR),$(addprefix $(OBJDIR)/, $(C_OBJECTS)))
 S_OBJECTS:=$(subst ..,$(UPDIR),$(addprefix $(OBJDIR)/, $(S_OBJECTS)))
+RC_OBJECTS:=$(subst ..,$(UPDIR),$(addprefix $(OBJDIR)/, $(RC_OBJECTS)))
 
 #######################################
 # decide which linker to use C or C++
@@ -173,7 +180,7 @@ endif
 #######################################
 # final list of objects
 #######################################
-LINK_OBJECTS=$(S_OBJECTS) $(C_OBJECTS) $(CXX_OBJECTS) $(EXT_OBJECTS)
+LINK_OBJECTS=$(S_OBJECTS) $(C_OBJECTS) $(CXX_OBJECTS) $(RC_OBJECTS) $(EXT_OBJECTS)
 
 #######################################
 # list of desired artefacts
@@ -212,9 +219,15 @@ endif
 all: $(ARTEFACTS)
 
 debug-make:
+	@echo "S:        " $(S_SOURCES)
+	@echo ""
 	@echo "C:        " $(C_SOURCES)
 	@echo ""
 	@echo "CXX:      " $(CXX_SOURCES)
+	@echo ""
+	@echo "RC:       " $(RC_SOURCES)
+	@echo ""
+	@echo "So:       " $(S_OBJECTS)
 	@echo ""
 	@echo "S:        " $(S_SOURCES)
 	@echo ""
@@ -222,7 +235,7 @@ debug-make:
 	@echo ""
 	@echo "CXXo:     " $(CXX_OBJECTS)
 	@echo ""
-	@echo "So:       " $(S_OBJECTS)
+	@echo "RCo:      " $(RC_OBJECTS)
 	@echo ""
 	@echo "Lnk Obj:  " $(LINK_OBJECTS)
 	@echo ""
@@ -233,6 +246,18 @@ debug-make:
 	@echo "INCDIR:   " $(INCDIR)
 	@echo ""
 	@echo "EXT OBJ:  " $(EXT_OBJECTS)
+
+UNAME_S := $(shell uname -s)
+UNAME_P := $(shell uname -p)
+
+.PHONY: sys-info
+sys-info:
+	@echo WIN: $(OS) $(PROCESSOR_ARCHITECTURE)
+	@echo UNIX: $(UNAME_S) $(UNAME_P)
+
+.PHONY: list-targets
+list-targets:
+	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
 
 ifneq ($(FOREIGN_MAKE_TARGETS),)
 clean: clean_foreign_targets
@@ -299,11 +324,20 @@ $(OBJDIR)/%.o: $$(subst $(UPDIR),..,%.c++) $(SELFDEP)
 	$(Q)$(CXX) $(FLAGS) $(CXXFLAGS) $< -o $@
 
 #######################################
+# RC targets
+#######################################
+.SECONDEXPANSION:
+$(OBJDIR)/%.o: $$(subst $(UPDIR),..,%.rc) $(SELFDEP)
+	@mkdir -p $(@D)
+	$(VECHO) ' [$(CLGRN)RC$(CLRST)]  $< ...\n'
+	$(Q)$(WINDRES) $< -o $@ $(addprefix --define ,$(RCDEFS)) $(addprefix --include-dir ,$(RCINCDIR))
+
+#######################################
 # Build targets
 #######################################
 $(EXECUTABLE): $(LINK_OBJECTS)
 	$(VECHO) ' [$(CLRED)LE$(CLRST)]  $(CLRED)$@$(CLRST) ...\n'
-	$(Q)$(LD) -o $@  $(LDFLAGS) $(subst ..,up,$(LINK_OBJECTS)) $(EXT_OBJECTS) $(addprefix -L,$(LIBDIR)) $(addprefix -l,$(EXT_LIBS)) 
+	$(Q)$(LD) -o $@  $(subst ..,up,$(LINK_OBJECTS)) $(LDFLAGS) $(EXT_OBJECTS) $(addprefix -L,$(LIBDIR)) $(addprefix -l,$(EXT_LIBS)) 
 
 $(BINARY): $(EXECUTABLE)
 	$(VECHO) ' [$(CLRED)B$(CLRST)]   $(CLRED)$@$(CLRST) ...\n'
@@ -311,7 +345,7 @@ $(BINARY): $(EXECUTABLE)
 
 $(SHARED_LIB): $(LINK_OBJECTS)
 	$(VECHO)  ' [$(CLRED)LL$(CLRST)]   $(CLRED)$@$(CLRST) ...\n'
-	$(Q)$(LD) -shared -o $@  $(LDFLAGS) $(subst ..,up,$(LINK_OBJECTS)) $(EXT_OBJECTS) $(addprefix -L,$(LIBDIR)) $(addprefix -l,$(EXT_LIBS)) 
+	$(Q)$(LD) -shared -o $@  $(subst ..,up,$(LINK_OBJECTS)) $(LDFLAGS) $(EXT_OBJECTS) $(addprefix -L,$(LIBDIR)) $(addprefix -l,$(EXT_LIBS)) 
 
 $(STATIC_LIB): $(LINK_OBJECTS)
 	$(VECHO)  ' [$(CLRED)AR$(CLRST)]  $(CLRED)$@$(CLRST) ...\n'
@@ -390,7 +424,6 @@ COMMON_WARN += -Wpacked
 COMMON_WARN += -Wpacked-bitfield-compat
 # COMMON_WARN += -Wpadded
 COMMON_WARN += -Wpointer-arith
-COMMON_WARN += -Wpointer-sign
 COMMON_WARN += -Wredundant-decls
 COMMON_WARN += -Wshadow
 COMMON_WARN += -Wsign-compare
@@ -401,7 +434,7 @@ COMMON_WARN += -Wstrict-overflow=2
 COMMON_WARN += -Wswitch-default
 # COMMON_WARN += -Wswitch-enum
 COMMON_WARN += -Wsync-nand
-COMMON_WARN += -Wsystem-headers
+# COMMON_WARN += -Wsystem-headers
 # COMMON_WARN += -Wundef
 COMMON_WARN += -Wunknown-pragmas
 COMMON_WARN += -Wunreachable-code
@@ -417,6 +450,7 @@ C_WARN += -Wimplicit-int
 C_WARN += -Wincompatible-pointer-types
 C_WARN += -Wint-conversion
 C_WARN += -Wno-pointer-sign
+C_WARN += -Wpointer-sign
 C_WARN += -Wstrict-prototypes
 
 CXX_WARN += -Wctor-dtor-privacy
