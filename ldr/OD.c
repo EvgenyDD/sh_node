@@ -36,8 +36,8 @@ OD_ATTR_PERSIST_COMM OD_PERSIST_COMM_t OD_PERSIST_COMM = {
     .x1017_producerHeartbeatTime = 0x0320,
     .x1018_identity = {
         .highestSub_indexSupported = 0x08,
-        .vendor_ID = 0x00525A4D,
-        .productCode = 0x00000180,
+        .vendor_ID = 0x464F5353,
+        .productCode = 0x53484E44,
         .revisionNumber = 0x00000000,
         .serialNumber = 0x00000000,
         .UID0 = 0x00000000,
@@ -327,7 +327,7 @@ static CO_PROGMEM ODObjs_t ODObjs = {
         {
             .dataOrig = NULL,
             .subIndex = 1,
-            .attribute = ODA_SDO_W,
+            .attribute = ODA_SDO_RW,
             .dataLength = 0
         }
     },

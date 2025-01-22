@@ -141,7 +141,9 @@ void main(void)
 	fw_header_check_all();
 
 	ret_mem_init();
+	ret_mem_set_rst_cause_app(platform_handle_reset_cause());
 	ret_mem_set_load_src(LOAD_SRC_APP); // let preboot know it was booted from bootloader
+
 	spi_common_init();
 	baro_init();
 	adc_init();

@@ -177,7 +177,38 @@ void platform_watchdog_init(void)
 	IWDG_Enable();
 }
 
-void _lseek_r(void) {}
-void _close_r(void) {}
-void _read_r(void) {}
-void _write_r(void) {}
+enum
+{
+	RST_LP = 0,
+	RST_WWDG,
+	RST_IWDG,
+	RST_POR,
+	RST_PIN,
+	RST_SFT,
+};
+
+uint32_t platform_handle_reset_cause(void)
+{
+	uint32_t v = 0;
+
+	if(RCC_GetFlagStatus(RCC_FLAG_LPWRRST)) v |= 1 << RST_LP;
+	if(RCC_GetFlagStatus(RCC_FLAG_WWDGRST)) v |= 1 << RST_WWDG;
+	if(RCC_GetFlagStatus(RCC_FLAG_IWDGRST)) v |= 1 << RST_IWDG;
+	if(RCC_GetFlagStatus(RCC_FLAG_PORRST)) v |= 1 << RST_POR;
+	if(RCC_GetFlagStatus(RCC_FLAG_PINRST)) v |= 1 << RST_PIN;
+	if(RCC_GetFlagStatus(RCC_FLAG_SFTRST)) v |= 1 << RST_SFT;
+
+	RCC_ClearFlag();
+	return v;
+}
+
+const char *platform_reset_cause_get(uint32_t v)
+{
+	if(v & (1 << RST_LP)) return "low power";
+	if(v & (1 << RST_WWDG)) return "w watchdog";
+	if(v & (1 << RST_IWDG)) return "i watchdog";
+	if(v & (1 << RST_POR)) return "pwr on";
+	if(v & (1 << RST_PIN)) return "pin";
+	if(v & (1 << RST_SFT)) return "soft";
+	return "unknown";
+}

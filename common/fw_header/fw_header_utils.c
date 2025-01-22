@@ -44,6 +44,8 @@ bool fw_header_check_region(fw_info_t *fw, uint32_t header_offset, uint32_t max_
 
 	fw_header_v1_t *hdr = (fw_header_v1_t *)(fw->addr + header_offset);
 
+	fw->size = hdr->fw_size;
+
 	if(flash_check_range(fw->addr, hdr->fw_size)) fw->locked = LOCK_BY_ADDR; // check flash range
 	if(hdr->fw_size <= (header_offset + sizeof(fw_header_v1_t))) fw->locked = LOCK_BY_SIZE_SMALL;
 

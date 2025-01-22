@@ -1,7 +1,7 @@
 EXE_NAME=sh_nd
 VER_MAJ = 1
 VER_MIN = 0
-VER_PATCH = 3
+VER_PATCH = 4
 MAKE_BINARY=yes
 
 TCHAIN = arm-none-eabi-

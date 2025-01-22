@@ -48,7 +48,8 @@ void delay_ms(volatile uint32_t delay_ms);
 void platform_watchdog_init(void);
 static inline void platform_watchdog_reset(void) { IWDG_ReloadCounter(); }
 
-const char *paltform_reset_cause_get(void);
+uint32_t platform_handle_reset_cause(void);
+const char *platform_reset_cause_get(uint32_t v);
 
 void _lseek_r(void);
 void _close_r(void);

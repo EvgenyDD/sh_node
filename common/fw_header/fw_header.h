@@ -34,6 +34,7 @@ typedef struct
 {
 	int locked;							// locked (::FW_HDR_LOCK_t)
 	uintptr_t addr;						// pointer to fw
+	uint32_t size;						// firmware size
 	int fields_count;					// count of fields
 	const char *field_product_ptr;		// pointer to value of the "product" field
 	int field_product_len;				// "product" field length
