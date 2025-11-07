@@ -16,14 +16,13 @@ static int eeprom_wait_write_finish(void)
 
 int eeprom_read(uint32_t addr, uint8_t *data, uint32_t size)
 {
-	if(addr + size >= EEPROM_SIZE) return EEP_ERR_ADDR_OVF;
-	int sts = i2c_common_write_to_read(EEPROM_ADDR | ((addr >> 8) & 0x3), addr & 0xFF, data, size);
-	return sts;
+	if(addr + size > EEPROM_SIZE) return EEP_ERR_ADDR_OVF;
+	return i2c_common_write_to_read(EEPROM_ADDR | ((addr >> 8) & 0x3), addr & 0xFF, data, size);
 }
 
 static int eeprom_write_page(uint32_t addr, const uint8_t *data, uint32_t size)
 {
-	if(addr + size >= EEPROM_SIZE) return EEP_ERR_ADDR_OVF;
+	if(addr + size > EEPROM_SIZE) return EEP_ERR_ADDR_OVF;
 
 	int sts = i2c_common_write(EEPROM_ADDR | ((addr >> 8) & 0x3), addr & 0xFF, data, size);
 	if(sts) return sts;
@@ -32,7 +31,7 @@ static int eeprom_write_page(uint32_t addr, const uint8_t *data, uint32_t size)
 
 int eeprom_write(uint32_t addr, const uint8_t *data, uint32_t size)
 {
-	if(addr + size >= EEPROM_SIZE) return EEP_ERR_ADDR_OVF;
+	if(addr + size > EEPROM_SIZE) return EEP_ERR_ADDR_OVF;
 
 	uint32_t p_data = 0;
 	for(;;)

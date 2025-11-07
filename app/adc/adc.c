@@ -86,6 +86,8 @@ void adc_init(void)
 	ADC_DMACmd(ADC1, ENABLE);
 	ADC_Cmd(ADC1, ENABLE);
 
+	ADC_TempSensorVrefintCmd(ENABLE);
+
 	ADC_ResetCalibration(ADC1);
 	while(ADC_GetResetCalibrationStatus(ADC1))
 		;
@@ -117,7 +119,7 @@ bool adc_track(void)
 		adc_val.sns_ai[3] = adc_buf[ADC_CH_AI3];
 
 		// adc_val.t_mcu = (1.43f - adc_buf[ADC_CH_T_MCU] / adc_max_cnt * v_ref) / 0.0043 + 25;
-		adc_val.t_mcu = (3575580 - adc_buf[ADC_CH_T_MCU] * 1874) / 10000;
+		adc_val.t_mcu = (3575580 - adc_buf[ADC_CH_T_MCU] * 1874) / 1000;
 
 		upd = true;
 

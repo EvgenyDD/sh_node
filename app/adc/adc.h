@@ -7,7 +7,7 @@
 typedef struct
 {
 	uint16_t vin, srv_pos, sns_mq2, sns_i[2], sns_ai[4];
-	int16_t t_mcu;
+	int16_t t_mcu; // 0.1C
 } adc_val_t;
 
 void adc_init(void);

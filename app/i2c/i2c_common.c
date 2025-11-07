@@ -83,7 +83,7 @@ static __inline void I2C_ReleaseSCL(void)
 // 	return 0;
 // }
 
-int i2c_common_write_to_read(uint8_t addr, uint16_t reg, uint8_t *data, uint16_t size)
+int i2c_common_write_to_read(uint8_t addr, uint8_t reg, uint8_t *data, uint16_t size)
 {
 	CHK_EVT_RET(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY), -1);
 
@@ -316,7 +316,7 @@ int i2c_common_read(uint8_t addr, uint8_t *data, uint16_t size)
 	return 0;
 }
 
-int i2c_common_write(uint8_t addr, uint16_t reg, const uint8_t *data, uint16_t size)
+int i2c_common_write(uint8_t addr, uint8_t reg, const uint8_t *data, uint16_t size)
 {
 	I2C_GenerateSTART(I2C1, ENABLE);											  // start
 	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT) == ERROR, -5); // EVENT 5
