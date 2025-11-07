@@ -1,5 +1,6 @@
 #include "i2c_common.h"
 #include "stm32f10x.h"
+#include <stdbool.h>
 
 // https://github.com/meng4036/stm32_i2c/tree/ad7ab7ccd97991d0bd0be7dc739f7a015afeb25b
 
@@ -47,7 +48,7 @@ void i2c_common_init(void)
 static __inline void I2C_PullDownSCL(void)
 {
 	GPIOB->BRR = GPIO_Pin_8;
-	GPIOB->CRH &= (uint32_t) ~(1 << 3); // PB8
+	GPIOB->CRH &= (uint32_t)~(1 << 3); // PB8
 }
 
 static __inline void I2C_ReleaseSCL(void)
@@ -351,4 +352,559 @@ int i2c_common_check_addr(uint8_t addr)
 
 	I2C_GenerateSTOP(I2C1, ENABLE);
 	return 0;
+}
+
+///////////////////////////////////////////////////
+
+#define I2C_7BIT_ADD_READ(__ADDRESS__) ((uint8_t)((__ADDRESS__) | I2C_OAR1_ADD0))
+#define I2C_7BIT_ADD_WRITE(__ADDRESS__) ((uint8_t)((__ADDRESS__) & (uint8_t)(~I2C_OAR1_ADD0)))
+#define I2C_7BIT_ADD_READ(__ADDRESS__) ((uint8_t)((__ADDRESS__) | I2C_OAR1_ADD0))
+#define I2C_MEM_ADD_MSB(__ADDRESS__) ((uint8_t)((uint16_t)(((uint16_t)((__ADDRESS__) & (uint16_t)0xFF00)) >> 8)))
+#define I2C_MEM_ADD_LSB(__ADDRESS__) ((uint8_t)((uint16_t)((__ADDRESS__) & (uint16_t)0x00FF)))
+
+#define I2C_TIMEOUT_FLAG 35U /*!< Timeout 35 ms             */
+#define __HAL_I2C_CLEAR_ADDRFLAG()    \
+	do                                \
+	{                                 \
+		__IO uint32_t tmpreg = 0x00U; \
+		tmpreg = I2C1->SR1;           \
+		tmpreg = I2C1->SR2;           \
+		(void)(tmpreg);               \
+	} while(0)
+
+#define I2C_FLAG_MASK 0x0000FFFFU
+
+#define __HAL_I2C_GET_FLAG(__FLAG__) ((((uint8_t)((__FLAG__) >> 16U)) == 0x01U)                                                            \
+										  ? ((((I2C1->SR1) & ((__FLAG__) & I2C_FLAG_MASK)) == ((__FLAG__) & I2C_FLAG_MASK)) ? SET : RESET) \
+										  : ((((I2C1->SR2) & ((__FLAG__) & I2C_FLAG_MASK)) == ((__FLAG__) & I2C_FLAG_MASK)) ? SET : RESET))
+
+#define __HAL_I2C_CLEAR_FLAG(__FLAG__) (I2C1->SR1 = ~((__FLAG__) & I2C_FLAG_MASK))
+
+static __IO uint32_t PreviousState = 0;
+
+typedef enum
+{
+	HAL_I2C_MODE_NONE = 0x00U,	 /*!< No I2C communication on going             */
+	HAL_I2C_MODE_MASTER = 0x10U, /*!< I2C communication is in Master Mode       */
+	HAL_I2C_MODE_SLAVE = 0x20U,	 /*!< I2C communication is in Slave Mode        */
+	HAL_I2C_MODE_MEM = 0x40U	 /*!< I2C communication is in Memory Mode       */
+} HAL_I2C_ModeTypeDef;
+
+typedef enum
+{
+	HAL_I2C_STATE_RESET = 0x00U,		  /*!< Peripheral is not yet Initialized         */
+	HAL_I2C_STATE_READY = 0x20U,		  /*!< Peripheral Initialized and ready for use  */
+	HAL_I2C_STATE_BUSY = 0x24U,			  /*!< An internal process is ongoing            */
+	HAL_I2C_STATE_BUSY_TX = 0x21U,		  /*!< Data Transmission process is ongoing      */
+	HAL_I2C_STATE_BUSY_RX = 0x22U,		  /*!< Data Reception process is ongoing         */
+	HAL_I2C_STATE_LISTEN = 0x28U,		  /*!< Address Listen Mode is ongoing            */
+	HAL_I2C_STATE_BUSY_TX_LISTEN = 0x29U, /*!< Address Listen Mode and Data Transmission
+											  process is ongoing                         */
+	HAL_I2C_STATE_BUSY_RX_LISTEN = 0x2AU, /*!< Address Listen Mode and Data Reception
+											  process is ongoing                         */
+	HAL_I2C_STATE_ABORT = 0x60U,		  /*!< Abort user request ongoing                */
+	HAL_I2C_STATE_TIMEOUT = 0xA0U,		  /*!< Timeout state                             */
+	HAL_I2C_STATE_ERROR = 0xE0U			  /*!< Error                                     */
+} HAL_I2C_StateTypeDef;
+
+#define HAL_I2C_ERROR_NONE 0x00000000U		/*!< No error              */
+#define HAL_I2C_ERROR_BERR 0x00000001U		/*!< BERR error            */
+#define HAL_I2C_ERROR_ARLO 0x00000002U		/*!< ARLO error            */
+#define HAL_I2C_ERROR_AF 0x00000004U		/*!< AF error              */
+#define HAL_I2C_ERROR_OVR 0x00000008U		/*!< OVR error             */
+#define HAL_I2C_ERROR_DMA 0x00000010U		/*!< DMA transfer error    */
+#define HAL_I2C_ERROR_TIMEOUT 0x00000020U	/*!< Timeout Error         */
+#define HAL_I2C_ERROR_SIZE 0x00000040U		/*!< Size Management error */
+#define HAL_I2C_ERROR_DMA_PARAM 0x00000080U /*!< DMA Parameter Error   */
+#define HAL_I2C_WRONG_START 0x00000200U		/*!< Wrong start Error     */
+
+__IO HAL_I2C_StateTypeDef State = 0;
+__IO HAL_I2C_ModeTypeDef Mode = 0;
+__IO uint32_t ErrorCode = 0;
+
+static int I2C_WaitOnRXNEFlagUntilTimeout(void)
+{
+	time = TIMEOUT;
+	while(__HAL_I2C_GET_FLAG(I2C_FLAG_RXNE) == RESET)
+	{
+		if(__HAL_I2C_GET_FLAG(I2C_FLAG_STOPF) == SET)
+		{
+			__HAL_I2C_CLEAR_FLAG(I2C_FLAG_STOPF);
+			PreviousState = HAL_I2C_MODE_NONE;
+			State = HAL_I2C_STATE_READY;
+			Mode = HAL_I2C_MODE_NONE;
+			return -1;
+		}
+
+		if(--time == 0)
+		{
+			if((__HAL_I2C_GET_FLAG(I2C_FLAG_RXNE) == RESET))
+			{
+				PreviousState = HAL_I2C_MODE_NONE;
+				State = HAL_I2C_STATE_READY;
+				Mode = HAL_I2C_MODE_NONE;
+				ErrorCode |= HAL_I2C_ERROR_TIMEOUT;
+				return -1;
+			}
+		}
+	}
+	return 0;
+}
+
+static int I2C_IsAcknowledgeFailed(void)
+{
+	if(__HAL_I2C_GET_FLAG(I2C_FLAG_AF) == SET)
+	{
+		__HAL_I2C_CLEAR_FLAG(I2C_FLAG_AF); /* Clear NACKF Flag */
+		PreviousState = HAL_I2C_MODE_NONE;
+		State = HAL_I2C_STATE_READY;
+		Mode = HAL_I2C_MODE_NONE;
+		ErrorCode |= HAL_I2C_ERROR_AF;
+		return -1;
+	}
+	return 0;
+}
+
+static int I2C_WaitOnTXEFlagUntilTimeout(void)
+{
+	time = TIMEOUT;
+	while(__HAL_I2C_GET_FLAG(I2C_FLAG_TXE) == RESET)
+	{
+		if(I2C_IsAcknowledgeFailed() != 0) return -1;
+		if(--time == 0)
+		{
+			if((__HAL_I2C_GET_FLAG(I2C_FLAG_TXE) == RESET))
+			{
+				PreviousState = HAL_I2C_MODE_NONE;
+				State = HAL_I2C_STATE_READY;
+				Mode = HAL_I2C_MODE_NONE;
+				ErrorCode |= HAL_I2C_ERROR_TIMEOUT;
+				return -1;
+			}
+		}
+	}
+	return 0;
+}
+
+static int I2C_WaitOnBTFFlagUntilTimeout(void)
+{
+	time = TIMEOUT;
+	while(__HAL_I2C_GET_FLAG(I2C_FLAG_BTF) == RESET)
+	{
+		if(I2C_IsAcknowledgeFailed() != 0) return -1;
+		if(--time == 0)
+		{
+			if((__HAL_I2C_GET_FLAG(I2C_FLAG_BTF) == RESET))
+			{
+				PreviousState = HAL_I2C_MODE_NONE;
+				State = HAL_I2C_STATE_READY;
+				Mode = HAL_I2C_MODE_NONE;
+				ErrorCode |= HAL_I2C_ERROR_TIMEOUT;
+				return -1;
+			}
+		}
+	}
+	return 0;
+}
+
+static int I2C_WaitOnMasterAddressFlagUntilTimeout(uint32_t Flag)
+{
+	time = TIMEOUT;
+	while(__HAL_I2C_GET_FLAG(Flag) == RESET)
+	{
+		if(__HAL_I2C_GET_FLAG(I2C_FLAG_AF) == SET)
+		{
+			SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+			__HAL_I2C_CLEAR_FLAG(I2C_FLAG_AF);
+			PreviousState = HAL_I2C_MODE_NONE;
+			State = HAL_I2C_STATE_READY;
+			Mode = HAL_I2C_MODE_NONE;
+			ErrorCode |= HAL_I2C_ERROR_AF;
+			return -1;
+		}
+
+		if(--time == 0)
+		{
+			if((__HAL_I2C_GET_FLAG(Flag) == RESET))
+			{
+				PreviousState = HAL_I2C_MODE_NONE;
+				State = HAL_I2C_STATE_READY;
+				Mode = HAL_I2C_MODE_NONE;
+				ErrorCode |= HAL_I2C_ERROR_TIMEOUT;
+				return -1;
+			}
+		}
+	}
+	return 0;
+}
+
+static int I2C_WaitOnFlagUntilTimeout(uint32_t Flag, bool Status)
+{
+	time = TIMEOUT;
+	while(__HAL_I2C_GET_FLAG(Flag) == Status)
+	{
+		if(--time == 0)
+		{
+			if((__HAL_I2C_GET_FLAG(Flag) == Status))
+			{
+				PreviousState = HAL_I2C_MODE_NONE;
+				State = HAL_I2C_STATE_READY;
+				Mode = HAL_I2C_MODE_NONE;
+				ErrorCode |= HAL_I2C_ERROR_TIMEOUT;
+				return -1;
+			}
+		}
+	}
+	return 0;
+}
+
+static int I2C_RequestMemoryWrite(uint16_t addr, uint16_t MemAddress, bool is_mem_16_bit)
+{
+	SET_BIT(I2C1->CR1, I2C_CR1_START);
+	if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_SB, RESET) != 0)
+	{
+		if(READ_BIT(I2C1->CR1, I2C_CR1_START) == I2C_CR1_START) ErrorCode = HAL_I2C_WRONG_START;
+		return -2;
+	}
+
+	I2C1->DR = I2C_7BIT_ADD_WRITE(addr);
+
+	if(I2C_WaitOnMasterAddressFlagUntilTimeout(I2C_FLAG_ADDR) != 0) return -1;
+
+	__HAL_I2C_CLEAR_ADDRFLAG();
+
+	if(I2C_WaitOnTXEFlagUntilTimeout() != 0)
+	{
+		if(ErrorCode == HAL_I2C_ERROR_AF) SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+		return -1;
+	}
+
+	if(is_mem_16_bit == false)
+	{
+		I2C1->DR = I2C_MEM_ADD_LSB(MemAddress);
+	}
+	else // 16bit
+	{
+		I2C1->DR = I2C_MEM_ADD_MSB(MemAddress);
+		if(I2C_WaitOnTXEFlagUntilTimeout() != 0)
+		{
+			if(ErrorCode == HAL_I2C_ERROR_AF)
+			{
+				SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+			}
+			return -1;
+		}
+		I2C1->DR = I2C_MEM_ADD_LSB(MemAddress);
+	}
+
+	return 0;
+}
+
+static int I2C_RequestMemoryRead(uint16_t addr, uint16_t MemAddress, bool is_mem_16_bit)
+{
+	SET_BIT(I2C1->CR1, I2C_CR1_ACK);
+	SET_BIT(I2C1->CR1, I2C_CR1_START);
+	if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_SB, RESET) != 0)
+	{
+		if(READ_BIT(I2C1->CR1, I2C_CR1_START) == I2C_CR1_START) ErrorCode = HAL_I2C_WRONG_START;
+		return -2;
+	}
+
+	I2C1->DR = I2C_7BIT_ADD_WRITE(addr);
+
+	if(I2C_WaitOnMasterAddressFlagUntilTimeout(I2C_FLAG_ADDR) != 0) return -1;
+
+	__HAL_I2C_CLEAR_ADDRFLAG();
+
+	if(I2C_WaitOnTXEFlagUntilTimeout() != 0)
+	{
+		if(ErrorCode == HAL_I2C_ERROR_AF) SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+		return -1;
+	}
+
+	if(is_mem_16_bit == false)
+	{
+		I2C1->DR = I2C_MEM_ADD_LSB(MemAddress);
+	}
+	else // 16bit
+	{
+		I2C1->DR = I2C_MEM_ADD_MSB(MemAddress);
+		if(I2C_WaitOnTXEFlagUntilTimeout() != 0)
+		{
+			if(ErrorCode == HAL_I2C_ERROR_AF) SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+			return -1;
+		}
+		I2C1->DR = I2C_MEM_ADD_LSB(MemAddress);
+	}
+
+	if(I2C_WaitOnTXEFlagUntilTimeout() != 0)
+	{
+		if(ErrorCode == HAL_I2C_ERROR_AF) SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+		return -1;
+	}
+
+	SET_BIT(I2C1->CR1, I2C_CR1_START);
+
+	if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_SB, RESET) != 0)
+	{
+		if(READ_BIT(I2C1->CR1, I2C_CR1_START) == I2C_CR1_START) ErrorCode = HAL_I2C_WRONG_START;
+		return -2;
+	}
+
+	I2C1->DR = I2C_7BIT_ADD_READ(addr);
+	if(I2C_WaitOnMasterAddressFlagUntilTimeout(I2C_FLAG_ADDR) != 0) return -1;
+
+	return 0;
+}
+
+///////////////////////////////////////////////////
+
+int HAL_I2C_Mem_Write(uint16_t addr, uint16_t MemAddress, bool is_mem_16_bit, const uint8_t *pData, uint16_t Size)
+{
+	if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_BUSY, SET) != 0) return -2;
+
+	CLEAR_BIT(I2C1->CR1, I2C_CR1_POS);
+
+	State = HAL_I2C_STATE_BUSY_TX;
+	Mode = HAL_I2C_MODE_MEM;
+	ErrorCode = HAL_I2C_ERROR_NONE;
+
+	const uint8_t *pBuffPtr = pData;
+	uint8_t XferCount = Size;
+	uint8_t XferSize = XferCount;
+
+	if(I2C_RequestMemoryWrite(addr, MemAddress, is_mem_16_bit) != 0) return -1;
+
+	while(XferSize > 0U)
+	{
+		if(I2C_WaitOnTXEFlagUntilTimeout() != 0)
+		{
+			if(ErrorCode == HAL_I2C_ERROR_AF) SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+			return -1;
+		}
+
+		I2C1->DR = *pBuffPtr;
+		pBuffPtr++;
+		XferSize--;
+		XferCount--;
+
+		if((__HAL_I2C_GET_FLAG(I2C_FLAG_BTF) == SET) && (XferSize != 0U))
+		{
+			I2C1->DR = *pBuffPtr;
+			pBuffPtr++;
+			XferSize--;
+			XferCount--;
+		}
+	}
+
+	if(I2C_WaitOnBTFFlagUntilTimeout() != 0)
+	{
+		if(ErrorCode == HAL_I2C_ERROR_AF) SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+		return -1;
+	}
+
+	SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+	State = HAL_I2C_STATE_READY;
+	Mode = HAL_I2C_MODE_NONE;
+	return 0;
+}
+
+int HAL_I2C_Mem_Read(uint16_t addr, uint16_t MemAddress, bool is_mem_16_bit, uint8_t *pData, uint16_t Size)
+{
+	__IO uint32_t count = 0U;
+
+	if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_BUSY, SET) != 0) return -2;
+
+	CLEAR_BIT(I2C1->CR1, I2C_CR1_POS);
+
+	State = HAL_I2C_STATE_BUSY_RX;
+	Mode = HAL_I2C_MODE_MEM;
+	ErrorCode = HAL_I2C_ERROR_NONE;
+
+	uint8_t *pBuffPtr = pData;
+	uint32_t XferCount = Size;
+	uint32_t XferSize = XferCount;
+
+	if(I2C_RequestMemoryRead(addr, MemAddress, is_mem_16_bit) != 0) return -1;
+
+	if(XferSize == 0U)
+	{
+		__HAL_I2C_CLEAR_ADDRFLAG();
+		SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+	}
+	else if(XferSize == 1U)
+	{
+		CLEAR_BIT(I2C1->CR1, I2C_CR1_ACK);
+		__disable_irq();
+		__HAL_I2C_CLEAR_ADDRFLAG();
+		SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+		__enable_irq();
+	}
+	else if(XferSize == 2U)
+	{
+		SET_BIT(I2C1->CR1, I2C_CR1_POS);
+		__disable_irq();
+		__HAL_I2C_CLEAR_ADDRFLAG();
+		CLEAR_BIT(I2C1->CR1, I2C_CR1_ACK);
+		__enable_irq();
+	}
+	else
+	{
+		SET_BIT(I2C1->CR1, I2C_CR1_ACK);
+		__HAL_I2C_CLEAR_ADDRFLAG();
+	}
+
+	while(XferSize > 0U)
+	{
+		if(XferSize <= 3U)
+		{
+			if(XferSize == 1U)
+			{
+				if(I2C_WaitOnRXNEFlagUntilTimeout() != 0) return -1;
+
+				*pBuffPtr = (uint8_t)I2C1->DR;
+				pBuffPtr++;
+				XferSize--;
+				XferCount--;
+			}
+			else if(XferSize == 2U)
+			{
+				if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_BTF, RESET) != 0) return -1;
+				__disable_irq();
+				SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+				*pBuffPtr = (uint8_t)I2C1->DR;
+				pBuffPtr++;
+				XferSize--;
+				XferCount--;
+				__enable_irq();
+				*pBuffPtr = (uint8_t)I2C1->DR;
+				pBuffPtr++;
+				XferSize--;
+				XferCount--;
+			}
+			else // 3 Last bytes
+			{
+				if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_BTF, RESET) != 0) return -1;
+
+				CLEAR_BIT(I2C1->CR1, I2C_CR1_ACK);
+				__disable_irq();
+				*pBuffPtr = (uint8_t)I2C1->DR;
+				pBuffPtr++;
+				XferSize--;
+				XferCount--;
+				count = I2C_TIMEOUT_FLAG * (SystemCoreClock / 25U / 1000U);
+				do
+				{
+					count--;
+					if(count == 0U)
+					{
+						PreviousState = HAL_I2C_MODE_NONE;
+						State = HAL_I2C_STATE_READY;
+						Mode = HAL_I2C_MODE_NONE;
+						ErrorCode |= HAL_I2C_ERROR_TIMEOUT;
+						__enable_irq();
+
+						return -1;
+					}
+				} while(__HAL_I2C_GET_FLAG(I2C_FLAG_BTF) == RESET);
+
+				SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+				*pBuffPtr = (uint8_t)I2C1->DR;
+				pBuffPtr++;
+
+				XferSize--;
+				XferCount--;
+
+				__enable_irq();
+
+				*pBuffPtr = (uint8_t)I2C1->DR;
+				pBuffPtr++;
+				XferSize--;
+				XferCount--;
+			}
+		}
+		else
+		{
+			if(I2C_WaitOnRXNEFlagUntilTimeout() != 0) return -1;
+
+			*pBuffPtr = (uint8_t)I2C1->DR;
+			pBuffPtr++;
+			XferSize--;
+			XferCount--;
+
+			if(__HAL_I2C_GET_FLAG(I2C_FLAG_BTF) == SET)
+			{
+				*pBuffPtr = (uint8_t)I2C1->DR;
+				pBuffPtr++;
+				XferSize--;
+				XferCount--;
+			}
+		}
+	}
+
+	State = HAL_I2C_STATE_READY;
+	Mode = HAL_I2C_MODE_NONE;
+
+	return 0;
+}
+
+int HAL_I2C_IsDeviceReady(uint16_t addr, uint32_t trials)
+{
+	uint32_t try = 0U;
+	bool tmp1;
+	bool tmp2;
+
+	if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_BUSY, SET) != 0) return -2;
+
+	CLEAR_BIT(I2C1->CR1, I2C_CR1_POS);
+	State = HAL_I2C_STATE_BUSY;
+	ErrorCode = HAL_I2C_ERROR_NONE;
+
+	do
+	{
+		time = TIMEOUT_SHORT;
+
+		SET_BIT(I2C1->CR1, I2C_CR1_START);
+		if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_SB, RESET) != 0)
+		{
+			if(READ_BIT(I2C1->CR1, I2C_CR1_START) == I2C_CR1_START) ErrorCode = HAL_I2C_WRONG_START;
+			return -2;
+		}
+
+		I2C1->DR = I2C_7BIT_ADD_WRITE(addr);
+
+		tmp1 = __HAL_I2C_GET_FLAG(I2C_FLAG_ADDR);
+		tmp2 = __HAL_I2C_GET_FLAG(I2C_FLAG_AF);
+		while((State != HAL_I2C_STATE_TIMEOUT) && (tmp1 == RESET) && (tmp2 == RESET))
+		{
+			if(--time == 0)
+			{
+				State = HAL_I2C_STATE_TIMEOUT;
+			}
+			tmp1 = __HAL_I2C_GET_FLAG(I2C_FLAG_ADDR);
+			tmp2 = __HAL_I2C_GET_FLAG(I2C_FLAG_AF);
+		}
+
+		State = HAL_I2C_STATE_READY;
+
+		if(__HAL_I2C_GET_FLAG(I2C_FLAG_ADDR) == SET)
+		{
+			SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+			__HAL_I2C_CLEAR_ADDRFLAG();
+			if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_BUSY, SET) != 0) return -1;
+			State = HAL_I2C_STATE_READY;
+			return 0;
+		}
+		else
+		{
+			SET_BIT(I2C1->CR1, I2C_CR1_STOP);
+			__HAL_I2C_CLEAR_FLAG(I2C_FLAG_AF);
+			if(I2C_WaitOnFlagUntilTimeout(I2C_FLAG_BUSY, SET) != 0) return -1;
+		}
+		try++;
+	} while(try < trials);
+
+	State = HAL_I2C_STATE_READY;
+
+	return -1;
 }
