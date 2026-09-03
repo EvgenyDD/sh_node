@@ -20,6 +20,7 @@ typedef enum
 	LOCK_NO_PROD_NAME_FIELD,
 	LOCK_PROD_MISMATCH,
 	LOCK_PROD_NAME_FAULT,
+	LOCK_PROD_MISMATCH_2,
 } FW_HDR_LOCK_t;
 
 typedef struct
@@ -40,6 +41,7 @@ typedef struct
 	int field_product_len;				// "product" field length
 	const char *field_product_name_ptr; // pointer to value of the "product_name" field
 	int field_product_name_len;			// "product_name" field length
+	const char *field_product_id_ptr;	// pointer to value of the "product_id" field
 	uint32_t ver_major;					// parsed major version
 	uint32_t ver_minor;					// parsed minor version
 	uint32_t ver_patch;					// parsed patch version
@@ -53,11 +55,17 @@ bool fw_fields_find_by_iterator_helper(fw_info_t *fw, unsigned int iterator, con
 
 int str_len_safe(const char *s);
 bool str_compare_equal_safe_two_arg(const char *s1, const char *s2);
+bool str_compare_equal_safe_two_arg_first_ram(const char *s1, uint32_t s1_max_len, const char *s2);
 bool str_compare_equal_safe_first_arg(const char *s1, const char *s2); // hack
 bool flash_check_range(uint32_t addr_start, uint32_t size);
 
 bool fw_header_check_region(fw_info_t *fw, uint32_t header_offset, uint32_t max_size);
-void fw_header_check_all(void);
+void fw_header_check_all(const char *str_dev_name, uint32_t str_dev_name_len);
+
+#define STR_DEV_ADDR 0
+#define STR_DEV_LEN 16
+
+void fw_header_eep_od_init(void);
 
 extern fw_info_t g_fw_info[FW_COUNT];
 

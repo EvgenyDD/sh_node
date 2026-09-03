@@ -8,7 +8,7 @@ MAKE_BINARY=yes
 TCHAIN = arm-none-eabi-
 MCPU += -mcpu=cortex-m3 -mthumb
 CDIALECT = gnu99
-OPT_LVL = 2
+OPT_LVL = s
 DBG_OPTS = -gdwarf-2 -ggdb -g
 
 CFLAGS   += -fvisibility=hidden -funsafe-math-optimizations -fdata-sections -ffunction-sections -fno-move-loop-invariants
@@ -28,21 +28,27 @@ LDFLAGS  += -specs=nano.specs
 LDFLAGS  += -Wl,--gc-sections
 LDFLAGS  += -Wl,--print-memory-usage
 
-PPDEFS += STM32F103xB USE_STDPERIPH_DRIVER STM32F10X_MD FW_HEADER_REDUCED PROD_NAME=\"$(PROD_NAME)\"
+PPDEFS += STM32F103xB USE_STDPERIPH_DRIVER STM32F10X_MD FW_HEADER_REDUCED
 
+INCDIR += .
 INCDIR += ../common
 INCDIR += ../common/CMSIS
 INCDIR += ../common/crc
 INCDIR += ../common/fw_header
+INCDIR += ../common/i2c
 INCDIR += ../common/STM32F10x_StdPeriph_Driver/inc
+INCDIR += ../dev
 
 SOURCES += startup_stm32f103xb.s
 SOURCES += $(wildcard ../common/crc/*.c)
 SOURCES += $(wildcard ../common/fw_header/*.c)
+SOURCES += $(wildcard ../common/i2c/*.c)
 SOURCES += ../common/lib.c
 SOURCES += ../common/platform.c
 SOURCES += ../common/ret_mem.c
+SOURCES += ../dev/eeprom.c
 SOURCES += preldr.c
+SOURCES += $(wildcard ../common/STM32F10x_StdPeriph_Driver/src/*.c)
 LDSCRIPT += ../ldscript/preldr.ld
 
 BINARY_SIGNED = $(BUILDDIR)/$(EXE_NAME)_signed.bin
@@ -55,7 +61,7 @@ $(SIGN): ../sign/sign.c
 	@gcc $< -o $@
 
 $(BINARY_SIGNED): $(BINARY) $(SIGN)
-	@$(SIGN) $(BINARY) $@ 3072 \
+	@$(SIGN) $(BINARY) $@ 4096 \
 		prod=$(PRODUCT) \
 		prod_name=$(EXE_NAME) \
 		ver_maj=$(VER_MAJ) \

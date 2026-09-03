@@ -13,12 +13,12 @@ extern bool g_stay_in_boot;
 
 #if FW_TYPE == FW_LDR
 #define FW_TARGET FW_APP
-#define ADDR_ORIGIN ((uint32_t) & __app_start)
-#define ADDR_END ((uint32_t) & __app_end)
+#define ADDR_ORIGIN ((uint32_t)&__app_start)
+#define ADDR_END ((uint32_t)&__app_end)
 #elif FW_TYPE == FW_APP
 #define FW_TARGET FW_LDR
-#define ADDR_ORIGIN ((uint32_t) & __ldr_start)
-#define ADDR_END ((uint32_t) & __ldr_end)
+#define ADDR_ORIGIN ((uint32_t)&__ldr_start)
+#define ADDR_END ((uint32_t)&__ldr_end)
 #endif
 
 static uint8_t readout_data[CO_CONFIG_SDO_SRV_BUFFER_SIZE];
@@ -34,7 +34,7 @@ static ODR_t flash_cmd_cb(OD_stream_t *stream, const void *buf, OD_size_t count,
 	switch(OD_RAM.x1F51_programControl.command)
 	{
 	case CO_SDO_FLASHER_CHECK_SIGNATURE:
-		fw_header_check_all();
+		fw_header_check_all(g_p_str_dev_name, STR_DEV_LEN);
 		return g_fw_info[FW_TARGET].locked ? ODR_INVALID_VALUE : ODR_OK;
 
 	/* The target is instructed to stop the running programme */
@@ -45,7 +45,7 @@ static ODR_t flash_cmd_cb(OD_stream_t *stream, const void *buf, OD_size_t count,
 
 	/* The target is instructed to start the selected programme */
 	case CO_SDO_FLASHER_W_START:
-		fw_header_check_all();
+		fw_header_check_all(g_p_str_dev_name, STR_DEV_LEN);
 		if(g_fw_info[FW_TARGET].locked)
 		{
 			OD_RAM.x1F57_flashStatusIdentification.error = CO_SDO_FLASHER_R_NOVALPROG;
@@ -75,7 +75,7 @@ static ODR_t flash_cmd_cb(OD_stream_t *stream, const void *buf, OD_size_t count,
 	   to start the bootloader (refer also to 3.2) */
 	case CO_SDO_FLASHER_W_START_BOOTLOADER:
 #if FW_TYPE == FW_LDR
-		fw_header_check_all();
+		fw_header_check_all(g_p_str_dev_name, STR_DEV_LEN);
 		if(g_fw_info[FW_APP].locked)
 		{
 			OD_RAM.x1F57_flashStatusIdentification.error = CO_SDO_FLASHER_R_NOVALPROG;
@@ -85,7 +85,7 @@ static ODR_t flash_cmd_cb(OD_stream_t *stream, const void *buf, OD_size_t count,
 			platform_reset();
 		}
 #else
-		fw_header_check_all();
+		fw_header_check_all(g_p_str_dev_name, STR_DEV_LEN);
 		if(g_fw_info[FW_LDR].locked)
 		{
 			OD_RAM.x1F57_flashStatusIdentification.error = CO_SDO_FLASHER_R_NOVALPROG;

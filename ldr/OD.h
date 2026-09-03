@@ -14,9 +14,9 @@
         Project File: profile.xdd
         File Version: 1
 
-        Created:      23/11/2020 14:00:00
+        Created:      23.11.2020 14:00:00
         Created By:   
-        Modified:     23/09/2023 12:39:00
+        Modified:     12.08.2026 13:44:00
         Modified By:  
 
     Device Info:
@@ -166,7 +166,8 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1F51 &OD->list[21]
 #define OD_ENTRY_H1F56 &OD->list[22]
 #define OD_ENTRY_H1F57 &OD->list[23]
-#define OD_ENTRY_H2000 &OD->list[24]
+#define OD_ENTRY_H1F58 &OD->list[24]
+#define OD_ENTRY_H2000 &OD->list[25]
 
 
 /*******************************************************************************
@@ -196,7 +197,8 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1F51_programControl &OD->list[21]
 #define OD_ENTRY_H1F56_appSoftIdentification &OD->list[22]
 #define OD_ENTRY_H1F57_flashStatusIdentification &OD->list[23]
-#define OD_ENTRY_H2000_errorBits &OD->list[24]
+#define OD_ENTRY_H1F58_prod_id &OD->list[24]
+#define OD_ENTRY_H2000_errorBits &OD->list[25]
 
 
 /*******************************************************************************

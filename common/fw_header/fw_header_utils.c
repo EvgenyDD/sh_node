@@ -71,6 +71,9 @@ bool fw_header_check_region(fw_info_t *fw, uint32_t header_offset, uint32_t max_
 	if(fw->field_product_name_ptr == NULL) fw->locked = LOCK_NO_PROD_NAME_FIELD;
 	fw->field_product_name_len = str_len_safe(fw->field_product_name_ptr);
 
+	fw->field_product_id_ptr = fw_fields_find_by_key(fw->addr + hdr->fields_addr_offset, "prod_id",
+													 max_size < hdr->fields_addr_offset ? 0 : max_size - hdr->fields_addr_offset);
+
 	const char *p_filed_ver_major = fw_fields_find_by_key(fw->addr + hdr->fields_addr_offset, "ver_maj",
 														  max_size < hdr->fields_addr_offset ? 0 : max_size - hdr->fields_addr_offset);
 	const char *p_filed_ver_minor = fw_fields_find_by_key(fw->addr + hdr->fields_addr_offset, "ver_min",

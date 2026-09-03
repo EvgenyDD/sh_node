@@ -1,5 +1,6 @@
 #include "platform.h"
 #include "lib.h"
+#include "prof.h"
 #include <string.h>
 
 static uint8_t page_erased_bits[FLASH_SIZE / PAGE_SIZE] = {0};
@@ -33,7 +34,7 @@ static int erase_page(uint32_t dest)
 	FLASH->AR = dest;
 	FLASH->CR |= FLASH_CR_STRT;
 	int sts = flash_wait_op();
-	FLASH->CR &= (uint32_t) ~(FLASH_CR_PER);
+	FLASH->CR &= (uint32_t)~(FLASH_CR_PER);
 	return sts;
 }
 
@@ -101,7 +102,7 @@ int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz)
 		*(__IO uint16_t *)(dest + (i << 1U)) = halfword;
 
 		sts = flash_wait_op();
-		FLASH->CR &= (uint32_t) ~(FLASH_CR_PG);
+		FLASH->CR &= (uint32_t)~(FLASH_CR_PG);
 		if(sts)
 		{
 			platform_flash_lock();
@@ -123,6 +124,34 @@ int platform_flash_read(uint32_t addr, uint8_t *src, uint32_t sz)
 	if(addr < FLASH_START || addr + sz >= FLASH_FINISH) return 1;
 	_memcpy(src, (void *)addr, sz);
 	return 0;
+}
+
+void platform_init_clocks(void)
+{
+	RCC->CR |= (uint32_t)0x00000001;
+	FLASH->ACR |= FLASH_ACR_PRFTBE;
+	FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
+	FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;
+	RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;	/* HCLK = SYSCLK */
+	RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE2_DIV1; /* PCLK2 = HCLK */
+	RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2; /* PCLK1 = HCLK */
+	RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
+	RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSI_Div2 | RCC_CFGR_PLLMULL16); /*  PLL configuration: PLLCLK = HSI/2 * 16 = 64 MHz */
+	RCC->CR |= RCC_CR_PLLON;
+	while((RCC->CR & RCC_CR_PLLRDY) == 0)
+		;
+	RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_SW));
+	RCC->CFGR |= (uint32_t)RCC_CFGR_SW_PLL;
+	while((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != (uint32_t)0x08)
+		;
+	RCC->AHBENR |= RCC_AHBENR_CRCEN;
+}
+
+void platform_init(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD, ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
+	GPIO_PinRemapConfig(GPIO_Remap_PD01, ENABLE);
 }
 
 void platform_deinit(void)
@@ -175,6 +204,19 @@ void platform_watchdog_init(void)
 	IWDG_SetReload(781); // (1/40K) * 256 * VAL = X sec
 	IWDG_ReloadCounter();
 	IWDG_Enable();
+}
+
+void delay_ms(volatile uint32_t delay_ms)
+{
+	volatile uint32_t start = 0;
+	int32_t mark_prev = 0;
+	prof_mark(&mark_prev);
+	const uint32_t time_limit = delay_ms * SYSTICK_IN_MS;
+	for(;;)
+	{
+		start += (uint32_t)prof_mark(&mark_prev);
+		if(start >= time_limit) return;
+	}
 }
 
 enum

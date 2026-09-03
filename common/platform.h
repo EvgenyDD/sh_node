@@ -7,6 +7,9 @@
 
 #define _BV(x) (1ULL << (x))
 
+#define SYSTICK_IN_US (64000000 / 1000000)
+#define SYSTICK_IN_MS (64000000 / 1000)
+
 #define PAGE_SIZE (1024)
 
 #define FLASH_LEN (0x00020000U) // 128kB
@@ -37,6 +40,8 @@ void platform_flash_lock(void);
 int platform_flash_read(uint32_t addr, uint8_t *src, uint32_t sz);
 int platform_flash_write(uint32_t dest, const uint8_t *src, uint32_t sz);
 
+void platform_init_clocks(void);
+void platform_init(void);
 void platform_deinit(void);
 void platform_reset(void);
 void platform_run_address(uint32_t address);
@@ -57,6 +62,7 @@ void _read_r(void);
 void _write_r(void);
 
 void USART1_IRQHandler(void);
+void DMA1_Channel4_IRQHandler(void);
 
 extern int __preldr_start, __preldr_end;
 extern int __ldr_start, __ldr_end;
@@ -65,5 +71,6 @@ extern int __app_start, __app_end;
 extern int __header_offset;
 
 extern uint32_t g_uid[3];
+extern char *g_p_str_dev_name;
 
 #endif // PLATFORM_H

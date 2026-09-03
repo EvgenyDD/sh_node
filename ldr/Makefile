@@ -31,6 +31,7 @@ LDFLAGS  += -Wl,--print-memory-usage
 EXT_LIBS +=c nosys
 
 PPDEFS += STM32F103xB USE_STDPERIPH_DRIVER STM32F10X_MD FW_HEADER_REDUCED PROD_NAME=\"$(PROD_NAME)\" FW_TYPE=FW_LDR CFG_SYSTEM_SAVES_NON_NATIVE_DATA=1
+PPDEFS += FW_HEADER_CANOPEN
 
 PPDEFS += CO_USE_GLOBALS
 PPDEFS += CO_CONFIG_FIFO=0
@@ -53,16 +54,18 @@ PPDEFS += CO_CONFIG_TRACE=0
 
 INCDIR += .
 INCDIR += ../common
-INCDIR += ../common/CMSIS
-INCDIR += ../common/crc
-INCDIR += ../common/fw_header
-INCDIR += ../common/canopennode
 INCDIR += ../common/canopendriver
+INCDIR += ../common/canopennode
+INCDIR += ../common/CMSIS
 INCDIR += ../common/config_system
+INCDIR += ../common/crc
 INCDIR += ../common/flasher
+INCDIR += ../common/fw_header
+INCDIR += ../common/i2c
 INCDIR += ../common/STM32F10x_StdPeriph_Driver/inc
+INCDIR += ../dev
 SOURCES += $(call rwildcard, ../common, *.c *.S *.s)
-SOURCES += ldr.c OD.c
+SOURCES += ldr.c OD.c ../dev/eeprom.c
 LDSCRIPT += ../ldscript/ldr.ld
 
 BINARY_SIGNED = $(BUILDDIR)/$(EXE_NAME)_signed.bin
@@ -90,7 +93,7 @@ $(BINARY_SIGNED): $(BINARY) $(SIGN)
 $(BINARY_MERGED): $(EXT_MAKE_TARGETS) $(BINARY_SIGNED)
 	@echo " [Merging binaries] ..." {$@}
 	@cp -f $< $@
-	@dd if=$(BINARY_SIGNED) of=$@ bs=1 oflag=append seek=3072 status=none
+	@dd if=$(BINARY_SIGNED) of=$@ bs=1 oflag=append seek=4096 status=none
 
 .PHONY: composite
 composite: $(BINARY_MERGED)
@@ -111,7 +114,7 @@ $(EXT_MAKE_TARGETS):
 #####################
 
 flash: $(BINARY_SIGNED)
-	@openocd -d0 -f ../target/stm32_f103.cfg -c "program $< 0x08000C00 verify reset exit" 
+	@openocd -d0 -f ../target/stm32_f103.cfg -c "program $< 0x08001000 verify reset exit" 
 
 flash_all: $(BINARY_MERGED)
 	@openocd -d0 -f ../target/stm32_f103.cfg -c "program $< 0x08000000 verify reset exit" 

@@ -1,0 +1,112 @@
+#include "i2c_common.h"
+#include "stm32f10x.h"
+#include <stdbool.h>
+
+#define TIMEOUT 0xFFF
+
+static uint32_t time = 0;
+
+void i2c_common_init(void)
+{
+	RCC->APB1ENR |= RCC_APB1Periph_I2C1;
+	RCC->APB2ENR |= RCC_APB2Periph_GPIOB;
+
+	DBGMCU->CR |= DBGMCU_CR_DBG_I2C1_SMBUS_TIMEOUT;
+
+	GPIOB->CRH &= ~(GPIO_CRH_MODE8 | GPIO_CRH_CNF8 | GPIO_CRH_MODE9 | GPIO_CRH_CNF9);
+	GPIOB->CRH |= (GPIO_CRH_MODE8_1 | GPIO_CRH_CNF8_0 | GPIO_CRH_CNF8_1);
+	GPIOB->CRH |= (GPIO_CRH_MODE9_1 | GPIO_CRH_CNF9_0 | GPIO_CRH_CNF9_1);
+
+	AFIO->MAPR |= AFIO_MAPR_I2C1_REMAP;
+
+	RCC->APB1RSTR |= RCC_APB1Periph_I2C1;
+	RCC->APB1RSTR &= ~RCC_APB1Periph_I2C1;
+
+	I2C1->CR1 &= ~I2C_CR1_PE;
+	I2C1->CR2 = (I2C1->CR2 & ~I2C_CR2_FREQ) | 32;
+	I2C1->CCR = I2C_CCR_FS | 27;
+	I2C1->TRISE = 11;
+	I2C1->OAR1 = (1 << 14) | 0x00;
+	I2C1->CR1 |= I2C_CR1_ACK;
+	I2C1->CR1 |= I2C_CR1_PE;
+}
+
+#define CHK_EVT_RET(x, c)                      \
+	for(time = TIMEOUT; time > 0 && x; time--) \
+		;                                      \
+	if(time == 0) return (c)
+
+int i2c_common_write(uint8_t addr, uint8_t reg, const uint8_t *data, uint16_t size)
+{
+	I2C_GenerateSTART(I2C1, ENABLE);											  // start
+	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT) == ERROR, -5); // EVENT 5
+
+	I2C_Send7bitAddress(I2C1, addr << 1, I2C_Direction_Transmitter);							// send iic reg
+	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) == ERROR, -6); // EVENT 6
+
+	I2C_SendData(I2C1, reg);														   // send reg
+	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == ERROR, -8); // EVENT 8
+
+	if(size)
+	{
+		while(size--)
+		{
+			I2C_SendData(I2C1, *data);
+			data++;
+			CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == ERROR, -80); // EVENT 8
+		}
+	}
+
+	I2C_GenerateSTOP(I2C1, ENABLE);
+	return 0;
+}
+
+int i2c_common_write_to_read(uint8_t addr, uint8_t reg, uint8_t *data, uint16_t size)
+{
+	if(size == 0) return 0;
+
+	CHK_EVT_RET(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY), 1);
+	I2C_GenerateSTART(I2C1, ENABLE);
+	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT) == ERROR, 1);
+
+	I2C_Send7bitAddress(I2C1, addr << 1, I2C_Direction_Transmitter);
+	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) == ERROR, 1);
+
+	I2C_SendData(I2C1, reg);
+	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED) == ERROR, 1);
+
+	I2C_GenerateSTART(I2C1, ENABLE);
+	CHK_EVT_RET(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT) == ERROR, 1);
+
+	I2C_Send7bitAddress(I2C1, addr << 1, I2C_Direction_Receiver);
+	CHK_EVT_RET(!I2C_GetFlagStatus(I2C1, I2C_FLAG_ADDR), 1);
+
+	if(size == 1)
+	{
+		I2C_AcknowledgeConfig(I2C1, DISABLE);
+		(void)I2C1->SR2;
+		I2C_GenerateSTOP(I2C1, ENABLE);
+
+		CHK_EVT_RET(!I2C_GetFlagStatus(I2C1, I2C_FLAG_RXNE), 1);
+		*data = I2C_ReceiveData(I2C1);
+	}
+	else
+	{
+		(void)I2C1->SR2;
+
+		while(size > 1)
+		{
+			CHK_EVT_RET(!I2C_GetFlagStatus(I2C1, I2C_FLAG_RXNE), 1);
+			*data++ = I2C_ReceiveData(I2C1);
+			size--;
+		}
+
+		CHK_EVT_RET(!I2C_GetFlagStatus(I2C1, I2C_FLAG_BTF), 1);
+		I2C_AcknowledgeConfig(I2C1, DISABLE);
+		I2C_GenerateSTOP(I2C1, ENABLE);
+		*data = I2C_ReceiveData(I2C1);
+	}
+
+	I2C_AcknowledgeConfig(I2C1, ENABLE);
+	return 0;
+}

@@ -114,6 +114,7 @@ typedef struct {
     OD_obj_record_t o_1F51_programControl[2];
     OD_obj_record_t o_1F56_appSoftIdentification[2];
     OD_obj_record_t o_1F57_flashStatusIdentification[2];
+    OD_obj_var_t o_1F58_prod_id;
     OD_obj_array_t o_2000_errorBits;
 } ODObjs_t;
 
@@ -373,6 +374,11 @@ static CO_PROGMEM ODObjs_t ODObjs = {
             .dataLength = 4
         }
     },
+    .o_1F58_prod_id = {
+        .dataOrig = NULL,
+        .attribute = ODA_SDO_RW,
+        .dataLength = 0
+    },
     .o_2000_errorBits = {
         .dataOrig0 = &OD_RAM.x2000_errorBits_sub0,
         .dataOrig = &OD_RAM.x2000_errorBits[0],
@@ -412,6 +418,7 @@ static OD_ATTR_OD OD_entry_t ODList[] = {
     {0x1F51, 0x02, ODT_REC, &ODObjs.o_1F51_programControl, NULL},
     {0x1F56, 0x02, ODT_REC, &ODObjs.o_1F56_appSoftIdentification, NULL},
     {0x1F57, 0x02, ODT_REC, &ODObjs.o_1F57_flashStatusIdentification, NULL},
+    {0x1F58, 0x01, ODT_VAR, &ODObjs.o_1F58_prod_id, NULL},
     {0x2000, 0x0B, ODT_ARR, &ODObjs.o_2000_errorBits, NULL},
     {0x0000, 0x00, 0, NULL, NULL}
 };

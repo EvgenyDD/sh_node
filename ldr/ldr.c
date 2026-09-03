@@ -5,8 +5,10 @@
 #include "can_driver.h"
 #include "config_system.h"
 #include "crc.h"
+#include "eeprom.h"
 #include "flasher_sdo.h"
 #include "fw_header.h"
+#include "i2c_common.h"
 #include "lss_cb.h"
 #include "platform.h"
 #include "prof.h"
@@ -29,6 +31,9 @@ extern int cfg_init_err_code;
 bool g_stay_in_boot = false;
 uint32_t g_uid[3];
 
+char g_str_dev_name[STR_DEV_LEN] = {0};
+char *g_p_str_dev_name = g_str_dev_name;
+
 CO_t *CO = NULL;
 
 uint8_t g_active_can_node_id = 127;		  // CO_LSS_NODE_ID_ASSIGNMENT;			/* Copied from CO_pending_can_node_id in the communication reset section */
@@ -44,54 +49,23 @@ config_entry_t g_device_config[] = {
 };
 const uint32_t g_device_config_count = sizeof(g_device_config) / sizeof(g_device_config[0]);
 
-void delay_ms(volatile uint32_t delay_ms)
+static inline void delay_10ms_loop(void)
 {
-	volatile uint32_t start = 0;
-	int32_t mark_prev = 0;
-	prof_mark(&mark_prev);
-	const uint32_t time_limit = delay_ms * SYSTICK_IN_MS;
-	for(;;)
-	{
-		start += (uint32_t)prof_mark(&mark_prev);
-		if(start >= time_limit)
-			return;
-	}
+	// 640,000 total cycles needed / 4 cycles per loop iteration = 160,000 iterations
+	uint32_t count = 160000;
+
+	__asm volatile(
+		"1: subs %0, #1 \n\t" // 1 cycle: Subtract 1 from count
+		"bne 1b         \n\t" // 3 cycles if branch taken, 1 cycle if not
+		: "+r"(count)
+		:
+		: "cc");
 }
 
 void main(void)
 {
-	RCC->CR |= (uint32_t)0x00000001;
-
-	FLASH->ACR |= FLASH_ACR_PRFTBE; /* Enable Prefetch Buffer */
-
-	/* Flash 2 wait state */
-	FLASH->ACR &= (uint32_t)((uint32_t)~FLASH_ACR_LATENCY);
-	FLASH->ACR |= (uint32_t)FLASH_ACR_LATENCY_2;
-
-	RCC->CFGR |= (uint32_t)RCC_CFGR_HPRE_DIV1;	/* HCLK = SYSCLK */
-	RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE2_DIV1; /* PCLK2 = HCLK */
-	RCC->CFGR |= (uint32_t)RCC_CFGR_PPRE1_DIV2; /* PCLK1 = HCLK */
-
-	/*  PLL configuration: PLLCLK = HSI/2 * 16 = 64 MHz */
-	RCC->CFGR &= (uint32_t)((uint32_t) ~(RCC_CFGR_PLLSRC | RCC_CFGR_PLLXTPRE | RCC_CFGR_PLLMULL));
-	RCC->CFGR |= (uint32_t)(RCC_CFGR_PLLSRC_HSI_Div2 | RCC_CFGR_PLLMULL16);
-
-	RCC->CR |= RCC_CR_PLLON;			  /* Enable PLL */
-	while((RCC->CR & RCC_CR_PLLRDY) == 0) /* Wait till PLL is ready */
-	{
-	}
-
-	/* Select PLL as system clock source */
-	RCC->CFGR &= (uint32_t)((uint32_t) ~(RCC_CFGR_SW));
-	RCC->CFGR |= (uint32_t)RCC_CFGR_SW_PLL;
-
-	/* Wait till PLL is used as system clock source */
-	while((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != (uint32_t)0x08)
-	{
-	}
-
-	RCC->AHBENR |= RCC_AHBENR_CRCEN;
-
+	platform_init_clocks();
+	platform_init();
 	platform_get_uid(g_uid);
 
 	prof_init();
@@ -107,7 +81,13 @@ void main(void)
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-	fw_header_check_all();
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6; // UART TX
+	GPIO_Init(GPIOB, &GPIO_InitStruct);
+	PIN_SET_(GPIOB, 6);
+
+	delay_10ms_loop();
+	fw_header_eep_od_init();
+	fw_header_check_all(g_p_str_dev_name, STR_DEV_LEN);
 
 	ret_mem_init();
 	ret_mem_set_rst_cause_ldr(platform_handle_reset_cause());
@@ -220,9 +200,3 @@ void main(void)
 		platform_reset();
 	}
 }
-
-// void assert_failed(uint8_t *file, uint32_t line)
-// {
-// 	while(1)
-// 		;
-// }

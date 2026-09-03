@@ -24,7 +24,16 @@ bool flash_check_range(uint32_t addr_start, uint32_t size)
 	return addr_start < FLASH_START || addr_end > FLASH_FINISH;
 }
 
-void fw_header_check_all(void)
+static bool memcmp_xff(const char *array, uint8_t len)
+{
+	for(int i = 0; i < len; i++)
+	{
+		if(array[i] != 0xFF) return false;
+	}
+	return true;
+}
+
+void fw_header_check_all(const char *str_dev_name, uint32_t str_dev_name_len)
 {
 	// initialize fw headers addresses
 	g_fw_info[FW_PRELDR].addr = (uint32_t)&__preldr_start;
@@ -54,6 +63,12 @@ void fw_header_check_all(void)
 											  g_fw_info[FW_APP].field_product_ptr) == false)
 			{
 				g_fw_info[FW_APP].locked = LOCK_PROD_MISMATCH;
+			}
+
+			if(str_compare_equal_safe_two_arg_first_ram(str_dev_name, str_dev_name_len,
+														g_fw_info[FW_APP].field_product_id_ptr) == false)
+			{
+				if(memcmp_xff(str_dev_name, str_dev_name_len) == false) g_fw_info[FW_APP].locked = LOCK_PROD_MISMATCH_2;
 			}
 		}
 

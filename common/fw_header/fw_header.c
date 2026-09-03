@@ -16,12 +16,12 @@ int str_len_safe(const char *s)
 	}
 }
 
-/** 
+/**
  * @brief Compare 2 strings (safe) - with absolute match
  * And checks for string ranges (first & second)
- * 
- * @param s1 
- * @param s2 
+ *
+ * @param s1
+ * @param s2
  * @return true strings are equal
  * @return false strings are not equal
  */
@@ -38,12 +38,25 @@ bool str_compare_equal_safe_two_arg(const char *s1, const char *s2)
 	return true;
 }
 
-/** 
+bool str_compare_equal_safe_two_arg_first_ram(const char *s1, uint32_t s1_max_len, const char *s2)
+{
+	int len_s1 = strnlen(s1, s1_max_len);
+	int len_s2 = str_len_safe(s2);
+
+	if(len_s1 <= 0 || len_s2 <= 0 || len_s1 != len_s2) return false;
+	for(int i = 0; i < len_s1; i++)
+	{
+		if(s1[i] != s2[i]) return false;
+	}
+	return true;
+}
+
+/**
  * @brief Compare 2 strings (safe) - with absolute match
  * And checks for string ranges (first string argument)
- * 
- * @param s1 
- * @param s2 
+ *
+ * @param s1
+ * @param s2
  * @return true strings are equal
  * @return false strings are not equal
  */
@@ -100,11 +113,11 @@ int fw_fields_get_count(uint32_t addr_fields_start, uint32_t region_size)
 /**
  * @brief Find header value by key
  * Note: not safe to use with fw_fields_get_count() <= 0 !!!
- * 
- * @param addr_fields_start 
- * @param key 
- * @param region_size 
-  * @return const char* NULL if failed to find
+ *
+ * @param addr_fields_start
+ * @param key
+ * @param region_size
+ * @return const char* NULL if failed to find
  * @return const char* !NULL if found
  */
 const char *fw_fields_find_by_key(uint32_t addr_fields_start, const char *key, uint32_t region_size)
@@ -161,10 +174,10 @@ const char *fw_fields_find_by_key(uint32_t addr_fields_start, const char *key, u
 /**
  * @brief Find header value by iterator
  * Note: not safe to use with fw_fields_get_count() <= 0 !!!
- * 
- * @param addr_fields_start 
- * @param max_length 
- * @param iterator 
+ *
+ * @param addr_fields_start
+ * @param max_length
+ * @param iterator
  * @param p_key [input] const pointer to key string
  * @param p_value [input] const pointer to value string
  * @return true if found
