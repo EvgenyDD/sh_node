@@ -1,6 +1,5 @@
 #include "app_common.h"
 #include "ds18b20.h"
-#include "flowmeter.h"
 
 CONFIG_GENERIC_INIT();
 
@@ -30,7 +29,6 @@ void main(void)
 	adc_init();
 	aht21_init();
 	ds18b20_init(9600);
-	flowmeter_init();
 
 	static uint32_t c = 0;
 
@@ -67,7 +65,9 @@ void main(void)
 			}
 			if(aht21.exist) aht21_poll(diff_ms);
 			ds18b20_read(diff_ms);
-			flowmeter_poll(diff_ms);
+			if(baro.exist) baro_poll(diff_ms);
+
+			OD_RAM.x6102_ds18b20[0] = ds18b20_get_temp()[0];
 		}
 		CAN_LOOP_POST()
 	}

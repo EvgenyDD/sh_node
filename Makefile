@@ -24,14 +24,14 @@ flash_null:
 		-e APP_TYPE=null\
 		flash_all
 
-flash_va:
+flash_street_sns:
 	@make -f MakefileApp --no-print-directory\
-		-e APP_PATH=apps/va\
-		-e APP_TYPE=va\
+		-e APP_PATH=apps/street_sns\
+		-e APP_TYPE=street_sns\
 		flash_all
 
 # EXECUTABLE=build/sh_nd_null/sh_nd
-EXECUTABLE=build/sh_nd_va/sh_nd
+EXECUTABLE=build/sh_nd_street_sns/sh_nd
 
 debug:
 	@set _NO_DEBUG_HEAP=1

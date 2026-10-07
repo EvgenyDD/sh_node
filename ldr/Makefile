@@ -64,8 +64,28 @@ INCDIR += ../common/fw_header
 INCDIR += ../common/i2c
 INCDIR += ../common/STM32F10x_StdPeriph_Driver/inc
 INCDIR += ../dev
-SOURCES += $(call rwildcard, ../common, *.c *.S *.s)
+
 SOURCES += ldr.c OD.c ../dev/eeprom.c
+
+SOURCES += $(wildcard ../common/*.c)
+SOURCES += $(wildcard ../common/*.s)
+SOURCES += $(wildcard ../common/canopendriver/*.c)
+SOURCES += $(wildcard ../common/config_system/*.c)
+SOURCES += $(wildcard ../common/crc/*.c)
+SOURCES += $(wildcard ../common/flasher/*.c)
+SOURCES += $(wildcard ../common/fw_header/*.c)
+SOURCES += $(wildcard ../common/i2c/*.c)
+SOURCES += $(wildcard ../common/STM32F10x_StdPeriph_Driver/src/*.c)
+
+SOURCES += $(wildcard ../common/canopennode/*.c)
+SOURCES += $(wildcard ../common/canopennode/301/*.c)
+SOURCES += $(wildcard ../common/canopennode/303/*.c)
+SOURCES += $(wildcard ../common/canopennode/304/*.c)
+SOURCES += $(wildcard ../common/canopennode/305/*.c)
+SOURCES += $(wildcard ../common/canopennode/309/*.c)
+SOURCES += $(wildcard ../common/canopennode/extra/*.c)
+SOURCES += $(wildcard ../common/canopennode/storage/*.c)
+
 LDSCRIPT += ../ldscript/ldr.ld
 
 BINARY_SIGNED = $(BUILDDIR)/$(EXE_NAME)_signed.bin

@@ -40,15 +40,15 @@ INCDIR += ../common/STM32F10x_StdPeriph_Driver/inc
 INCDIR += ../dev
 
 SOURCES += startup_stm32f103xb.s
-SOURCES += $(wildcard ../common/crc/*.c)
-SOURCES += $(wildcard ../common/fw_header/*.c)
-SOURCES += $(wildcard ../common/i2c/*.c)
 SOURCES += ../common/lib.c
 SOURCES += ../common/platform.c
 SOURCES += ../common/ret_mem.c
+SOURCES += $(wildcard ../common/crc/*.c)
+SOURCES += $(wildcard ../common/fw_header/*.c)
+SOURCES += $(wildcard ../common/i2c/*.c)
+SOURCES += $(wildcard ../common/STM32F10x_StdPeriph_Driver/src/*.c)
 SOURCES += ../dev/eeprom.c
 SOURCES += preldr.c
-SOURCES += $(wildcard ../common/STM32F10x_StdPeriph_Driver/src/*.c)
 LDSCRIPT += ../ldscript/preldr.ld
 
 BINARY_SIGNED = $(BUILDDIR)/$(EXE_NAME)_signed.bin

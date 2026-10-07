@@ -1,0 +1,4 @@
+PB0 AI3 3380k NTC  
+PA5 AI0 sense level sensor
+PB7 pump high press
+PB6 valve water tank in

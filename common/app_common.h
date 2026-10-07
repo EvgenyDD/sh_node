@@ -25,7 +25,6 @@
 
 #define NMT_CONTROL                  \
 	(CO_NMT_STARTUP_TO_OPERATIONAL | \
-	 CO_NMT_ERR_ON_ERR_REG |         \
 	 CO_NMT_ERR_ON_BUSOFF_HB |       \
 	 CO_ERR_REG_GENERIC_ERR |        \
 	 CO_ERR_REG_COMMUNICATION)
