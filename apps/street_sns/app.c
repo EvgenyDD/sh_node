@@ -1,11 +1,13 @@
 #include "app_common.h"
-#include "ds18b20.h"
 
-CONFIG_GENERIC_INIT();
-
-#define PIR_OFF_TO_MS 20000
-
-static uint32_t pir_off_tmr = 0;
+config_entry_t g_device_config[] = {
+	{"can_id", sizeof(pending_can_node_id), 0, &pending_can_node_id},
+	{"can_baud", sizeof(pending_can_baud), 0, &pending_can_baud},
+	{"hb_prod_ms", sizeof(OD_PERSIST_COMM.x1017_producerHeartbeatTime), 0, &OD_PERSIST_COMM.x1017_producerHeartbeatTime},
+	{"ds_addr", sizeof(OD_RAM.x8102_ds18b20_cfg), 0, OD_RAM.x8102_ds18b20_cfg},
+	{"ds_cnt", sizeof(OD_RAM.x8101_ds18b20_cmd.num_sensors), 0, &OD_RAM.x8101_ds18b20_cmd.num_sensors},
+};
+const uint32_t g_device_config_count = sizeof(g_device_config) / sizeof(g_device_config[0]);
 
 void main(void)
 {
@@ -33,6 +35,7 @@ void main(void)
 	adc_init();
 	aht21_init();
 	ds18b20_init(9600);
+	pir_init();
 
 	for(;;)
 	{
@@ -44,46 +47,11 @@ void main(void)
 			if(led_tim >= 500) led_tim = 0;
 			PIN_WR_(GPIOD, 1, led_tim < (OD_RAM.x6104_pir.pir_state ? 500 : 5));
 
-			static uint32_t h = 0, blo = 0;
-			h += diff_ms;
-			if(h >= 600)
-			{
-				h = 0;
-				blo++;
-				if(blo == 5)
-				{
-					blo = 0;
-					ds18b20_detect();
-					// GPIOD->ODR ^= 1 << 1;
-				}
-			}
-
 			adc_track();
 			if(aht21.exist) aht21_poll(diff_ms);
 			if(baro.exist) baro_poll(diff_ms);
-			ds18b20_read(diff_ms);
-			OD_RAM.x6102_ds18b20[0] = ds18b20_get_temp()[0];
-
-			{
-				static bool pir_prev = 0;
-				bool pir_now = PIN_GET_(GPIOB, 12);
-				if(pir_now && !pir_prev)
-				{
-					pir_off_tmr = PIR_OFF_TO_MS;
-					OD_RAM.x6104_pir.pir_state = 1;
-					CO_TPDOsendRequest(&CO->TPDO[1]);
-				}
-				if(pir_off_tmr)
-				{
-					pir_off_tmr = pir_off_tmr > diff_ms ? pir_off_tmr - diff_ms : 0;
-					if(pir_off_tmr == 0)
-					{
-						OD_RAM.x6104_pir.pir_state = 0;
-						CO_TPDOsendRequest(&CO->TPDO[1]);
-					}
-				}
-				pir_prev = pir_now;
-			}
+			ds18b20_poll(diff_ms);
+			pir_poll(diff_ms);
 		}
 		CAN_LOOP_POST()
 	}

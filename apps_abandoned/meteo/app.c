@@ -2,7 +2,14 @@
 #include "gps.h"
 #include "mag.h"
 
-CONFIG_GENERIC_INIT();
+config_entry_t g_device_config[] = {
+	{"can_id", sizeof(pending_can_node_id), 0, &pending_can_node_id},
+	{"can_baud", sizeof(pending_can_baud), 0, &pending_can_baud},
+	{"hb_prod_ms", sizeof(OD_PERSIST_COMM.x1017_producerHeartbeatTime), 0, &OD_PERSIST_COMM.x1017_producerHeartbeatTime},
+	{"ds_addr", sizeof(OD_RAM.x8102_ds18b20_cfg), 0, OD_RAM.x8102_ds18b20_cfg},
+	{"ds_cnt", sizeof(OD_RAM.x8101_ds18b20_cmd.num_sensors), 0, &OD_RAM.x8101_ds18b20_cmd.num_sensors},
+};
+const uint32_t g_device_config_count = sizeof(g_device_config) / sizeof(g_device_config[0]);
 
 #define V0e 840
 #define V1se 1485

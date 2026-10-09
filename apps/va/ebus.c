@@ -6,7 +6,7 @@
 #include "stm32f10x.h"
 #include <stdbool.h>
 
-#define DBG
+// #define DBG
 
 extern volatile uint8_t trig;
 

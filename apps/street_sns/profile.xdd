@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-10-07" fileModificationTime="15:56:40.8207501+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-10-08" fileModificationTime="14:37:32.4365993+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Home</q1:vendorName>
         <q1:vendorID></q1:vendorID>
@@ -396,6 +396,9 @@
               <USINT />
             </q1:varDeclaration>
             <q1:varDeclaration name="detect" uniqueID="UID_RECSUB_810101">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="num_sensors" uniqueID="UID_RECSUB_810102">
               <USINT />
             </q1:varDeclaration>
           </q1:struct>
@@ -1570,10 +1573,15 @@
           <q1:parameter uniqueID="UID_SUB_810100">
             <label lang="en">Highest sub-index supported</label>
             <USINT />
-            <q1:defaultValue value="0x01" />
+            <q1:defaultValue value="0x02" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_810101" access="readWrite">
             <label lang="en">detect</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_810102" access="readWrite">
+            <label lang="en">num_sensors</label>
             <USINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
@@ -1699,7 +1707,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-10-07" fileModificationTime="15:56:40.8207501+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-10-08" fileModificationTime="14:37:32.4365993+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />
@@ -1954,9 +1962,10 @@
             <CANopenSubObject subIndex="01" name="pir_state" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610401" />
           </CANopenObject>
           <CANopenObject index="7000" name="_obj2" objectType="7" PDOmapping="RPDO" uniqueIDRef="UID_OBJ_7000" />
-          <CANopenObject index="8101" name="ds18b20_cmd" objectType="9" uniqueIDRef="UID_OBJ_8101" subNumber="2">
+          <CANopenObject index="8101" name="ds18b20_cmd" objectType="9" uniqueIDRef="UID_OBJ_8101" subNumber="3">
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810100" />
             <CANopenSubObject subIndex="01" name="detect" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810101" />
+            <CANopenSubObject subIndex="02" name="num_sensors" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810102" />
           </CANopenObject>
           <CANopenObject index="8102" name="ds18b20_cfg" objectType="8" uniqueIDRef="UID_OBJ_8102" subNumber="17">
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810200" />
