@@ -738,8 +738,8 @@ static CO_PROGMEM ODObjs_t ODObjs = {
     },
     .o_1F58_prod_id = {
         .dataOrig = NULL,
-        .attribute = ODA_SDO_R | ODA_MB,
-        .dataLength = 4
+        .attribute = ODA_SDO_RW,
+        .dataLength = 0
     },
     .o_2000_errorBits = {
         .dataOrig0 = &OD_RAM.x2000_errorBits_sub0,
