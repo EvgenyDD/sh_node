@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-10-03" fileModificationTime="01:05:19.0640960+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-10-08" fileModificationTime="14:37:21.7411166+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Home</q1:vendorName>
         <q1:vendorID></q1:vendorID>
@@ -312,17 +312,6 @@
               <UDINT />
             </q1:varDeclaration>
           </q1:struct>
-          <q1:struct name="baro" uniqueID="UID_REC_6101">
-            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_610100">
-              <USINT />
-            </q1:varDeclaration>
-            <q1:varDeclaration name="pres" uniqueID="UID_RECSUB_610101">
-              <DINT />
-            </q1:varDeclaration>
-            <q1:varDeclaration name="temp" uniqueID="UID_RECSUB_610102">
-              <DINT />
-            </q1:varDeclaration>
-          </q1:struct>
           <q1:struct name="aht21" uniqueID="UID_REC_6103">
             <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_610300">
               <USINT />
@@ -332,6 +321,17 @@
             </q1:varDeclaration>
             <q1:varDeclaration name="hum" uniqueID="UID_RECSUB_610302">
               <DINT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="ds18b20_cmd" uniqueID="UID_REC_8101">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_810100">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="detect" uniqueID="UID_RECSUB_810101">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="num_sensors" uniqueID="UID_RECSUB_810102">
+              <USINT />
             </q1:varDeclaration>
           </q1:struct>
         </q1:dataTypeList>
@@ -1081,7 +1081,7 @@
           <q1:parameter uniqueID="UID_SUB_180002" access="readWrite">
             <label lang="en">Transmission type</label>
             <USINT />
-            <q1:defaultValue value="1" />
+            <q1:defaultValue value="50" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_180003" access="readWrite">
             <label lang="en">Inhibit time</label>
@@ -1106,7 +1106,7 @@
           <q1:parameter uniqueID="UID_SUB_1A0000" access="readWrite">
             <label lang="en">Number of mapped application objects in PDO</label>
             <USINT />
-            <q1:defaultValue value="2" />
+            <q1:defaultValue value="4" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0001" access="readWrite">
             <label lang="en">Application object 1</label>
@@ -1116,17 +1116,17 @@
           <q1:parameter uniqueID="UID_SUB_1A0002" access="readWrite">
             <label lang="en">Application object 2</label>
             <UDINT />
-            <q1:defaultValue value="0x61010120" />
+            <q1:defaultValue value="0x61020210" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0003" access="readWrite">
             <label lang="en">Application object 3</label>
             <UDINT />
-            <q1:defaultValue value="0x00000000" />
+            <q1:defaultValue value="0x61020310" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0004" access="readWrite">
             <label lang="en">Application object 4</label>
             <UDINT />
-            <q1:defaultValue value="0x00000000" />
+            <q1:defaultValue value="0x61020410" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0005" access="readWrite">
             <label lang="en">Application object 5</label>
@@ -1203,9 +1203,9 @@
             <UDINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
-          <q1:parameter uniqueID="UID_OBJ_1F58">
+          <q1:parameter uniqueID="UID_OBJ_1F58" access="readWrite">
             <label lang="en">prod_id</label>
-            <DINT />
+            <BITSTRING />
           </q1:parameter>
           <q1:parameter uniqueID="UID_OBJ_2000">
             <label lang="en">Error Bits</label>
@@ -1264,25 +1264,6 @@
           <q1:parameter uniqueID="UID_SUB_20000A" access="readWrite">
             <label lang="en">Sub Object 10</label>
             <USINT />
-            <q1:defaultValue value="0" />
-          </q1:parameter>
-          <q1:parameter uniqueID="UID_OBJ_6101">
-            <label lang="en">baro</label>
-            <q1:dataTypeIDRef uniqueIDRef="UID_REC_6101" />
-          </q1:parameter>
-          <q1:parameter uniqueID="UID_SUB_610100">
-            <label lang="en">Highest sub-index supported</label>
-            <USINT />
-            <q1:defaultValue value="2" />
-          </q1:parameter>
-          <q1:parameter uniqueID="UID_SUB_610101">
-            <label lang="en">pres</label>
-            <DINT />
-            <q1:defaultValue value="0" />
-          </q1:parameter>
-          <q1:parameter uniqueID="UID_SUB_610102">
-            <label lang="en">temp</label>
-            <DINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_OBJ_6102">
@@ -1396,6 +1377,25 @@
           <q1:parameter uniqueID="UID_OBJ_7000" access="readWriteInput">
             <label lang="en">_obj2</label>
             <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_8101">
+            <label lang="en">ds18b20_cmd</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_8101" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_810100">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x02" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_810101" access="readWrite">
+            <label lang="en">detect</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_810102" access="readWrite">
+            <label lang="en">num_sensors</label>
+            <USINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_OBJ_8102">
@@ -1520,7 +1520,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-10-03" fileModificationTime="01:05:19.0640960+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-10-08" fileModificationTime="14:37:21.7411166+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />
@@ -1722,11 +1722,6 @@
             <CANopenSubObject subIndex="09" name="Sub Object 9" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_200009" />
             <CANopenSubObject subIndex="0A" name="Sub Object 10" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_20000A" />
           </CANopenObject>
-          <CANopenObject index="6101" name="baro" objectType="9" uniqueIDRef="UID_OBJ_6101" subNumber="3">
-            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610100" />
-            <CANopenSubObject subIndex="01" name="pres" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610101" />
-            <CANopenSubObject subIndex="02" name="temp" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610102" />
-          </CANopenObject>
           <CANopenObject index="6102" name="ds18b20" objectType="8" uniqueIDRef="UID_OBJ_6102" subNumber="17">
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610200" />
             <CANopenSubObject subIndex="01" name="ds18b20_1" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610201" />
@@ -1752,6 +1747,11 @@
             <CANopenSubObject subIndex="02" name="hum" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610302" />
           </CANopenObject>
           <CANopenObject index="7000" name="_obj2" objectType="7" PDOmapping="RPDO" uniqueIDRef="UID_OBJ_7000" />
+          <CANopenObject index="8101" name="ds18b20_cmd" objectType="9" uniqueIDRef="UID_OBJ_8101" subNumber="3">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810100" />
+            <CANopenSubObject subIndex="01" name="detect" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810101" />
+            <CANopenSubObject subIndex="02" name="num_sensors" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810102" />
+          </CANopenObject>
           <CANopenObject index="8102" name="ds18b20_cfg" objectType="8" uniqueIDRef="UID_OBJ_8102" subNumber="17">
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810200" />
             <CANopenSubObject subIndex="01" name="ds18b20_cfg_1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_810201" />

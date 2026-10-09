@@ -1,25 +1,16 @@
 #include "ds18b20.h"
+#include "CANopen.h"
+#include "OD.h"
+#include "cfg_device.h"
 #include "platform.h"
 #include "stm32f10x.h"
 
-#define MAX_SENSORS 16
+#ifdef CFG_USE_DS18B20
 
+#define MAX_SENSORS 16
 #define CONV_TIME_MS 750
 
-struct
-{
-	int16_t rawtemp;
-	uint32_t tmr;
-	uint8_t temp[2];
-	uint32_t c;
-
-	uint32_t readout_index;
-
-	int16_t sensor_temperatures[MAX_SENSORS];
-} ds18b20 = {0};
-
-uint8_t uid_table[MAX_SENSORS][8] = {0};
-uint32_t uid_count = 0;
+static uint32_t readout_idx = 0;
 
 static uint8_t one_wire_crc8(const uint8_t *data, uint8_t len)
 {
@@ -59,19 +50,15 @@ static void uart_set_baud(uint32_t new_baudrate)
 
 static uint8_t uart_trx(uint8_t value)
 {
-	// В STM32 F1 чтение регистра SR, а затем регистра DR автоматически сбрасывает ORE, FE и NE
 	volatile uint32_t status = USART1->SR;
 	volatile uint32_t dummy = USART1->DR;
 	(void)status;
 	(void)dummy;
 
-	uint32_t timeout = 20000; // Подберите экспериментально (обычно хватает нескольких тысяч циклов)
+	uint32_t timeout = 20000;
 	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
 	{
-		if(--timeout == 0)
-		{
-			return 0xFF; // Если зависли на передаче — выходим с флагом "пустой шины"
-		}
+		if(--timeout == 0) return 0xFF;
 	}
 
 	USART_SendData(USART1, value);
@@ -79,12 +66,7 @@ static uint8_t uart_trx(uint8_t value)
 	timeout = 20000;
 	while(USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
 	{
-		if(--timeout == 0)
-		{
-			// Если провод отключен или зашумлен, мы не зависнем, а просто выйдем.
-			// Возвращаем 0xFF, что для 1-Wire означает "линия пустая (логическая единица)"
-			return 0xFF;
-		}
+		if(--timeout == 0) return 0xFF; // disconnected/noisy -> exit, 1-Wire "line idle (logic high)
 	}
 
 	return USART_ReceiveData(USART1);
@@ -94,8 +76,7 @@ static uint8_t one_wire_reset(void)
 {
 	uart_set_baud(9600);
 
-	// Шлем 0xF0. Если датчик на шине есть, он прижмет линию к нулю, и прилетевший обратно байт НЕ будет равен 0xF0.
-	uint8_t presence_byte = uart_trx(0xF0);
+	uint8_t presence_byte = uart_trx(0xF0); // if sensor is present on the bus - pull down, byte received != 0xF0.
 
 	uart_set_baud(115200);
 
@@ -109,7 +90,7 @@ static void one_wire_wr_bit(uint8_t bit)
 
 static uint8_t one_wire_rd_bit(void)
 {
-	return uart_trx(0xFF) == 0xFF ? 1 : 0; // Чтобы прочитать бит, мы отпускаем линию (шлем 0xFF) Если датчик хочет сказать "0", он прижмет линию, и вернется НЕ 0xFF
+	return uart_trx(0xFF) == 0xFF ? 1 : 0; // release the line (send 0xFF). Sensor wants to signal a "0": pull the line low, return != 0xFF
 }
 
 static void one_wire_wr_byte(uint8_t byte)
@@ -130,116 +111,12 @@ static uint8_t one_wire_rd_byte(void)
 	return byte;
 }
 
-void ds18b20_detect(void)
-{
-	uint8_t last_mismatch = 0;
-	uint8_t last_device_flag = 0;
-	uint8_t current_uid[8] = {0};
-
-	uid_count = 0;
-
-	do
-	{
-		if(!one_wire_reset()) break; // Проверяем наличие датчиков на шине через Reset Pulse
-
-		one_wire_wr_byte(0xF0); // Search ROM
-
-		uint8_t id_bit_number = 1;
-		uint8_t last_zero = 0;
-		uint8_t rom_byte_number = 0;
-		uint8_t rom_byte_mask = 1;
-		uint8_t search_direction = 0;
-		uint8_t search_result = 1; // Флаг успешного прохода по дереву адресов
-
-		while(id_bit_number <= 64) // Проход по всем 64 битам уникального ID датчика
-		{
-			// Читаем прямой бит и его инверсную копию
-			uint8_t id_bit = one_wire_rd_bit();
-			uint8_t cmp_id_bit = one_wire_rd_bit();
-
-			// Если оба бита равны 1 — на шине произошла ошибка или датчики отключились
-			if((id_bit == 1) && (cmp_id_bit == 1))
-			{
-				search_result = 0;
-				break;
-			}
-			else
-			{
-				// Если биты разные, то у всех датчиков на шине в этой позиции одинаковый бит
-				if(id_bit != cmp_id_bit)
-				{
-					search_direction = id_bit; // Выбираем этот бит как направление движения
-				}
-				else
-				{
-					// Коллизия: есть датчики как с "0", так и с "1" в текущей позиции бита
-					if(id_bit_number < last_mismatch)
-					{
-						// Если мы левее прошлой развилки, идем по сохраненному пути
-						search_direction = ((current_uid[rom_byte_number] & rom_byte_mask) > 0);
-					}
-					else
-					{
-						// Если мы на уровне или правее прошлой развилки:
-						// Если мы точно на ней — выбираем "1", если правее — выбираем "0"
-						search_direction = (id_bit_number == last_mismatch);
-					}
-
-					if(search_direction == 0) last_zero = id_bit_number; // Если выбрали "0", запоминаем эту развилку как самую последнюю
-				}
-
-				if(search_direction == 1) // Записываем выбранный бит в текущий собираемый UID
-				{
-					current_uid[rom_byte_number] |= rom_byte_mask;
-				}
-				else
-				{
-					current_uid[rom_byte_number] &= ~rom_byte_mask;
-				}
-
-				one_wire_wr_bit(search_direction); // Отправляем выбранное направление датчикам, чтобы отсечь ненужные
-
-				id_bit_number++;
-				rom_byte_mask <<= 1;
-				if(rom_byte_mask == 0)
-				{
-					rom_byte_number++;
-					rom_byte_mask = 1;
-				}
-			}
-		}
-
-		if(search_result) // Если проход по 64 битам завершился успешно
-		{
-			if(uid_count >= MAX_SENSORS) return;
-
-			if(one_wire_crc8(current_uid, 8) == 0)
-			{
-				for(uint8_t i = 0; i < 8; i++)
-				{
-					uid_table[uid_count][i] = current_uid[i];
-				}
-				uid_count++; // Увеличиваем счетчик найденных датчиков
-			}
-			last_mismatch = last_zero;
-
-			if(last_mismatch == 0) last_device_flag = 1; // Если развилок больше не осталось, значит мы нашли все датчики
-		}
-		else
-		{
-
-			break; // В случае аппаратного сбоя при чтении битов прерываем поиск
-		}
-
-	} while(!last_device_flag);
-}
-
 // static int read_temp_single(int16_t *temp)
 // {
 // 	if(!one_wire_reset()) return -1;
 
 // 	one_wire_wr_byte(0xCC); // Skip ROM
-// 	one_wire_wr_byte(0xBE); // Read Scratchpad (чтение памяти датчика)
+// 	one_wire_wr_byte(0xBE); // Read Scratchpad
 
 // 	uint8_t temp_lsb = one_wire_rd_byte();
 // 	uint8_t temp_msb = one_wire_rd_byte();
@@ -271,47 +148,6 @@ static int read_temp_addr(const uint8_t *rom, int16_t *temp)
 	return 0;
 }
 
-int ds18b20_read(uint32_t diff_ms)
-{
-	if(ds18b20.readout_index < uid_count)
-	{
-		int16_t temp;
-		if(read_temp_addr(uid_table[ds18b20.readout_index], &temp) == 0)
-		{
-			ds18b20.sensor_temperatures[ds18b20.readout_index] = temp;
-		}
-		else
-		{
-			ds18b20.sensor_temperatures[ds18b20.readout_index] = -100;
-		}
-
-		ds18b20.readout_index++;
-	}
-
-	if(ds18b20.tmr)
-	{
-		if(ds18b20.tmr > diff_ms)
-		{
-			ds18b20.tmr -= diff_ms;
-			return 2;
-		}
-		else
-		{
-			ds18b20.tmr = 0;
-			ds18b20.readout_index = 0;
-		}
-		return 0;
-	}
-	if(!one_wire_reset()) return -1; // Если никто не ответил — выходим
-
-	one_wire_wr_byte(0xCC); // Skip ROM
-	one_wire_wr_byte(0x44); // Start Conversion
-
-	ds18b20.tmr = CONV_TIME_MS;
-
-	return 1;
-}
-
 void ds18b20_init(uint32_t baudrate)
 {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
@@ -335,4 +171,148 @@ void ds18b20_init(uint32_t baudrate)
 	USART_Cmd(USART1, ENABLE);
 }
 
-int16_t *ds18b20_get_temp(void) { return ds18b20.sensor_temperatures; }
+void ds18b20_poll(uint32_t diff_ms)
+{
+	if(readout_idx < OD_RAM.x8101_ds18b20_cmd.num_sensors)
+	{
+		int16_t temp;
+		if(read_temp_addr(OD_RAM.x8102_ds18b20_cfg[readout_idx], &temp) == 0)
+		{
+			OD_RAM.x6102_ds18b20[readout_idx] = temp;
+		}
+		else
+		{
+			OD_RAM.x6102_ds18b20[readout_idx] = INT16_MIN;
+		}
+
+		readout_idx++;
+		return;
+	}
+
+	static uint32_t tmr = 0;
+	if(tmr)
+	{
+		tmr = tmr > diff_ms ? tmr - diff_ms : 0;
+		if(tmr == 0) readout_idx = 0;
+		return;
+	}
+
+	if(OD_RAM.x8101_ds18b20_cmd.detect != 0)
+	{
+		OD_RAM.x8101_ds18b20_cmd.num_sensors = ds18b20_detect();
+		OD_RAM.x8101_ds18b20_cmd.detect = 0;
+		return;
+	}
+
+	{								  // start conversion ALL sensors
+		if(!one_wire_reset()) return; // no response
+
+		one_wire_wr_byte(0xCC); // Skip ROM
+		one_wire_wr_byte(0x44); // Start Conversion
+
+		tmr = CONV_TIME_MS;
+	}
+
+	return;
+}
+
+uint8_t ds18b20_detect(void)
+{
+	uint8_t last_mismatch = 0;
+	uint8_t last_device_flag = 0;
+	uint8_t current_uid[8] = {0};
+
+	uint8_t uid_count = 0;
+
+	do
+	{
+		if(!one_wire_reset()) break; // check any sensor with Reset Pulse
+
+		one_wire_wr_byte(0xF0); // Search ROM
+
+		uint8_t id_bit_number = 1;
+		uint8_t last_zero = 0;
+		uint8_t rom_byte_number = 0;
+		uint8_t rom_byte_mask = 1;
+		uint8_t search_direction = 0;
+		uint8_t search_result = 1;
+
+		while(id_bit_number <= 64) // 64bit  UID
+		{
+			uint8_t id_bit = one_wire_rd_bit();
+			uint8_t cmp_id_bit = one_wire_rd_bit();
+
+			if((id_bit == 1) && (cmp_id_bit == 1)) // If both bits are 1, a bus error has occurred or the sensors have disconnected
+			{
+				search_result = 0;
+				break;
+			}
+			else
+			{
+
+				if(id_bit != cmp_id_bit) // bits are different -> then all sensors on the bus have the same bit at this position
+				{
+					search_direction = id_bit; // select this bit as the direction of movement
+				}
+				else
+				{
+					if(id_bit_number < last_mismatch) // conflict: there are sensors with both "0" and "1" at the current bit position
+					{
+						search_direction = ((current_uid[rom_byte_number] & rom_byte_mask) > 0);
+					}
+					else
+					{
+						search_direction = (id_bit_number == last_mismatch); // exactly on it, we select "1"; if we are to the right, we select "0"
+					}
+
+					if(search_direction == 0) last_zero = id_bit_number; // chose "0", we mark this fork as the very last one
+				}
+
+				if(search_direction == 1) // write the selected bit to the UID currently being assembled
+				{
+					current_uid[rom_byte_number] |= rom_byte_mask;
+				}
+				else
+				{
+					current_uid[rom_byte_number] &= ~rom_byte_mask;
+				}
+
+				one_wire_wr_bit(search_direction); // send selected direction to the sensors to filter out the unwanted ones
+
+				id_bit_number++;
+				rom_byte_mask <<= 1;
+				if(rom_byte_mask == 0)
+				{
+					rom_byte_number++;
+					rom_byte_mask = 1;
+				}
+			}
+		}
+
+		if(search_result) // 64-bit pass completed successfully
+		{
+			if(uid_count >= MAX_SENSORS) return uid_count;
+
+			if(one_wire_crc8(current_uid, 8) == 0)
+			{
+				for(uint8_t i = 0; i < 8; i++)
+				{
+					OD_RAM.x8102_ds18b20_cfg[uid_count][i] = current_uid[i];
+				}
+				uid_count++;
+			}
+			last_mismatch = last_zero;
+
+			if(last_mismatch == 0) last_device_flag = 1;
+		}
+		else
+		{
+			break; // hardware failure during bit reading - abort the search
+		}
+
+	} while(!last_device_flag);
+
+	return uid_count;
+}
+
+#endif

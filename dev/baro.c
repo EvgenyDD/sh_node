@@ -1,9 +1,12 @@
 #include "baro.h"
 #include "CANopen.h"
 #include "OD.h"
+#include "cfg_device.h"
 #include "spi_common.h"
 #include "stm32f10x.h"
 #include <string.h>
+
+#ifdef CFG_USE_BARO
 
 extern void delay_ms(volatile uint32_t delay_ms);
 
@@ -150,3 +153,5 @@ void baro_poll(uint32_t diff_ms)
 		OD_RAM.x6101_baro.pres = (uint32_t)baro.pres;
 	}
 }
+
+#endif

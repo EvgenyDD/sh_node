@@ -16,7 +16,7 @@
 
         Created:      23.11.2020 14:00:00
         Created By:   
-        Modified:     07.10.2026 15:56:40
+        Modified:     08.10.2026 14:37:32
         Modified By:  
 
     Device Info:
@@ -200,6 +200,7 @@ typedef struct {
     struct {
         uint8_t highestSub_indexSupported;
         uint8_t detect;
+        uint8_t num_sensors;
     } x8101_ds18b20_cmd;
     uint8_t x8102_ds18b20_cfg_sub0;
     uint8_t x8102_ds18b20_cfg[OD_CNT_ARR_8102][8];

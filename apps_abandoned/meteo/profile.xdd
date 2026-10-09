@@ -2603,8 +2603,7 @@
           </q1:parameter>
           <q1:parameter uniqueID="UID_OBJ_1F58" access="readWrite">
             <label lang="en">prod_id</label>
-            <STRING />
-            <q1:defaultValue value="               " />
+            <BITSTRING />
           </q1:parameter>
           <q1:parameter uniqueID="UID_OBJ_2000">
             <label lang="en">Error Bits</label>
