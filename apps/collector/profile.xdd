@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-10-08" fileModificationTime="14:34:05.2455395+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-10-11" fileModificationTime="14:59:14.5498477+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Home</q1:vendorName>
         <q1:vendorID></q1:vendorID>
@@ -1255,7 +1255,7 @@
           <q1:parameter uniqueID="UID_SUB_180001" access="readWrite">
             <label lang="en">COB-ID used by TPDO</label>
             <UDINT />
-            <q1:defaultValue value="0x400001C0" />
+            <q1:defaultValue value="0x40000180" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_180002" access="readWrite">
             <label lang="en">Transmission type</label>
@@ -1327,12 +1327,12 @@
           <q1:parameter uniqueID="UID_SUB_180201" access="readWrite">
             <label lang="en">COB-ID used by TPDO</label>
             <UDINT />
-            <q1:defaultValue value="$NODEID+0xC0000380" />
+            <q1:defaultValue value="$NODEID+0x40000380" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_180202" access="readWrite">
             <label lang="en">Transmission type</label>
             <USINT />
-            <q1:defaultValue value="254" />
+            <q1:defaultValue value="50" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_180203" access="readWrite">
             <label lang="en">Inhibit time</label>
@@ -1368,12 +1368,12 @@
           <q1:parameter uniqueID="UID_SUB_180302" access="readWrite">
             <label lang="en">Transmission type</label>
             <USINT />
-            <q1:defaultValue value="254" />
+            <q1:defaultValue value="50" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_180303" access="readWrite">
             <label lang="en">Inhibit time</label>
             <UINT />
-            <q1:defaultValue value="100" />
+            <q1:defaultValue value="0" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_180305" access="readWrite">
             <label lang="en">Event timer</label>
@@ -1458,12 +1458,12 @@
           <q1:parameter uniqueID="UID_SUB_1A0103" access="readWrite">
             <label lang="en">Application object 3</label>
             <UDINT />
-            <q1:defaultValue value="0x61060110" />
+            <q1:defaultValue value="0x61020710" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0104" access="readWrite">
             <label lang="en">Application object 4</label>
             <UDINT />
-            <q1:defaultValue value="0x61000110" />
+            <q1:defaultValue value="0x61020810" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0105" access="readWrite">
             <label lang="en">Application object 5</label>
@@ -1543,22 +1543,22 @@
           <q1:parameter uniqueID="UID_SUB_1A0300" access="readWrite">
             <label lang="en">Number of mapped application objects in PDO</label>
             <USINT />
-            <q1:defaultValue value="1" />
+            <q1:defaultValue value="3" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0301" access="readWrite">
             <label lang="en">Application object 1</label>
             <UDINT />
-            <q1:defaultValue value="0x61070108" />
+            <q1:defaultValue value="0x61060410" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0302" access="readWrite">
             <label lang="en">Application object 2</label>
             <UDINT />
-            <q1:defaultValue value="0x00000000" />
+            <q1:defaultValue value="0x61000110" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0303" access="readWrite">
             <label lang="en">Application object 3</label>
             <UDINT />
-            <q1:defaultValue value="0x00000000" />
+            <q1:defaultValue value="0x61070108" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0304" access="readWrite">
             <label lang="en">Application object 4</label>
@@ -2052,7 +2052,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-10-08" fileModificationTime="14:34:05.2455395+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-10-11" fileModificationTime="14:59:14.5498477+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />

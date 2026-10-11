@@ -35,6 +35,7 @@ void main(void)
 	aht21_init();
 	ds18b20_init(9600);
 	tacho_init();
+	pir_init();
 
 	static uint32_t c = 0;
 
@@ -54,7 +55,7 @@ void main(void)
 			if(aht21.exist) aht21_poll(diff_ms);
 			ds18b20_poll(diff_ms);
 			tacho_poll(diff_ms);
-			pir_poll(diff_ms);
+			pir_poll(diff_ms, 2);
 		}
 		CAN_LOOP_POST()
 	}

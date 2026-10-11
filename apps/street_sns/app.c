@@ -51,7 +51,7 @@ void main(void)
 			if(aht21.exist) aht21_poll(diff_ms);
 			if(baro.exist) baro_poll(diff_ms);
 			ds18b20_poll(diff_ms);
-			pir_poll(diff_ms);
+			pir_poll(diff_ms, 1);
 		}
 		CAN_LOOP_POST()
 	}

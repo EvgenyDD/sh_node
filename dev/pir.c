@@ -21,7 +21,7 @@ void pir_init(void)
 	GPIO_Init(GPIOB, &GPIO_InitStruct);
 }
 
-void pir_poll(uint32_t diff_ms)
+void pir_poll(uint32_t diff_ms, uint8_t pdo_n)
 {
 	static bool pir_prev = 0;
 	bool pir_now = PIN_GET_(GPIOB, 12);
@@ -29,7 +29,7 @@ void pir_poll(uint32_t diff_ms)
 	{
 		pir_off_tmr = PIR_OFF_TO_MS;
 		OD_RAM.x6104_pir.pir_state = 1;
-		CO_TPDOsendRequest(&CO->TPDO[1]);
+		CO_TPDOsendRequest(&CO->TPDO[pdo_n]);
 	}
 	if(pir_off_tmr)
 	{
@@ -37,7 +37,7 @@ void pir_poll(uint32_t diff_ms)
 		if(pir_off_tmr == 0)
 		{
 			OD_RAM.x6104_pir.pir_state = 0;
-			CO_TPDOsendRequest(&CO->TPDO[1]);
+			CO_TPDOsendRequest(&CO->TPDO[pdo_n]);
 		}
 	}
 	pir_prev = pir_now;

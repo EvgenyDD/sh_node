@@ -71,7 +71,7 @@ OD_ATTR_PERSIST_COMM OD_PERSIST_COMM_t OD_PERSIST_COMM = {
     },
     .x1800_TPDOCommunicationParameter = {
         .highestSub_indexSupported = 0x06,
-        .COB_IDUsedByTPDO = 0x000001C0,
+        .COB_IDUsedByTPDO = 0x40000180,
         .transmissionType = 0x32,
         .inhibitTime = 0x0000,
         .eventTimer = 0x0000,

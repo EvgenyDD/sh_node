@@ -37,7 +37,7 @@ void main(void)
 			adc_track();
 			if(aht21.exist) aht21_poll(diff_ms);
 			ebus_poll(diff_ms);
-			pir_poll(diff_ms);
+			pir_poll(diff_ms, 0);
 
 			static uint32_t f = 0;
 			f += diff_ms;
