@@ -62,7 +62,6 @@ void _read_r(void);
 void _write_r(void);
 
 void USART1_IRQHandler(void);
-void DMA1_Channel4_IRQHandler(void);
 
 extern int __preldr_start, __preldr_end;
 extern int __ldr_start, __ldr_end;

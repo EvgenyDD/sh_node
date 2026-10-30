@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-10-10" fileModificationTime="15:35:24.6600873+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-10-20" fileModificationTime="17:34:12.3479610+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Home</q1:vendorName>
         <q1:vendorID></q1:vendorID>
@@ -83,6 +83,26 @@
           <q1:array name="Error Bits" uniqueID="UID_ARR_2000">
             <q1:subrange lowerLimit="0" upperLimit="10" />
             <USINT />
+          </q1:array>
+          <q1:array name="ebus_pkt_raw" uniqueID="UID_ARR_6110">
+            <q1:subrange lowerLimit="0" upperLimit="16" />
+            <BITSTRING />
+          </q1:array>
+          <q1:array name="ebus_err_ph_cnt" uniqueID="UID_ARR_6111">
+            <q1:subrange lowerLimit="0" upperLimit="11" />
+            <UDINT />
+          </q1:array>
+          <q1:array name="ebus_err_pkt_cnt" uniqueID="UID_ARR_6112">
+            <q1:subrange lowerLimit="0" upperLimit="15" />
+            <UDINT />
+          </q1:array>
+          <q1:array name="ebus_err_cnt" uniqueID="UID_ARR_6113">
+            <q1:subrange lowerLimit="0" upperLimit="6" />
+            <UDINT />
+          </q1:array>
+          <q1:array name="ebus_ok_cnt" uniqueID="UID_ARR_6114">
+            <q1:subrange lowerLimit="0" upperLimit="3" />
+            <DINT />
           </q1:array>
           <q1:struct name="Identity" uniqueID="UID_REC_1018">
             <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_101800">
@@ -243,6 +263,26 @@
               <USINT />
             </q1:varDeclaration>
           </q1:struct>
+          <q1:struct name="TPDO communication parameter" uniqueID="UID_REC_1801">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_180100">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="COB-ID used by TPDO" uniqueID="UID_RECSUB_180101">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Transmission type" uniqueID="UID_RECSUB_180102">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Inhibit time" uniqueID="UID_RECSUB_180103">
+              <UINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Event timer" uniqueID="UID_RECSUB_180105">
+              <UINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="SYNC start value" uniqueID="UID_RECSUB_180106">
+              <USINT />
+            </q1:varDeclaration>
+          </q1:struct>
           <q1:struct name="TPDO mapping parameter" uniqueID="UID_REC_1A00">
             <q1:varDeclaration name="Number of mapped application objects in PDO" uniqueID="UID_RECSUB_1A0000">
               <USINT />
@@ -269,6 +309,35 @@
               <UDINT />
             </q1:varDeclaration>
             <q1:varDeclaration name="Application object 8" uniqueID="UID_RECSUB_1A0008">
+              <UDINT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="TPDO mapping parameter" uniqueID="UID_REC_1A01">
+            <q1:varDeclaration name="Number of mapped application objects in PDO" uniqueID="UID_RECSUB_1A0100">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Application object 1" uniqueID="UID_RECSUB_1A0101">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Application object 2" uniqueID="UID_RECSUB_1A0102">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Application object 3" uniqueID="UID_RECSUB_1A0103">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Application object 4" uniqueID="UID_RECSUB_1A0104">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Application object 5" uniqueID="UID_RECSUB_1A0105">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Application object 6" uniqueID="UID_RECSUB_1A0106">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Application object 7" uniqueID="UID_RECSUB_1A0107">
+              <UDINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="Application object 8" uniqueID="UID_RECSUB_1A0108">
               <UDINT />
             </q1:varDeclaration>
           </q1:struct>
@@ -320,6 +389,45 @@
               <USINT />
             </q1:varDeclaration>
             <q1:varDeclaration name="pir_state" uniqueID="UID_RECSUB_610401">
+              <USINT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="boiler_state" uniqueID="UID_REC_610F">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_610F00">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="mode" uniqueID="UID_RECSUB_610F01">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="tf" uniqueID="UID_RECSUB_610F02">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="tr" uniqueID="UID_RECSUB_610F03">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="t_hot_water" uniqueID="UID_RECSUB_610F04">
+              <USINT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="ebus_setp" uniqueID="UID_REC_7001">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_700100">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="mode" uniqueID="UID_RECSUB_700101">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="flow_temp" uniqueID="UID_RECSUB_700102">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="hwc_temp" uniqueID="UID_RECSUB_700103">
+              <USINT />
+            </q1:varDeclaration>
+          </q1:struct>
+          <q1:struct name="ebus_cmd" uniqueID="UID_REC_8200">
+            <q1:varDeclaration name="Highest sub-index supported" uniqueID="UID_RECSUB_820000">
+              <USINT />
+            </q1:varDeclaration>
+            <q1:varDeclaration name="enable" uniqueID="UID_RECSUB_820001">
               <USINT />
             </q1:varDeclaration>
           </q1:struct>
@@ -1075,7 +1183,7 @@
           <q1:parameter uniqueID="UID_SUB_180003" access="readWrite">
             <label lang="en">Inhibit time</label>
             <UINT />
-            <q1:defaultValue value="0" />
+            <q1:defaultValue value="100" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_180005" access="readWrite">
             <label lang="en">Event timer</label>
@@ -1083,6 +1191,42 @@
             <q1:defaultValue value="0" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_180006" access="readWrite">
+            <label lang="en">SYNC start value</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_1801">
+            <label lang="en">TPDO communication parameter</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_1801" />
+            <q1:property name="CO_countLabel" value="TPDO" />
+            <q1:property name="CO_storageGroup" value="PERSIST_COMM" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_180100">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x06" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_180101" access="readWrite">
+            <label lang="en">COB-ID used by TPDO</label>
+            <UDINT />
+            <q1:defaultValue value="$NODEID+0x40000280" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_180102" access="readWrite">
+            <label lang="en">Transmission type</label>
+            <USINT />
+            <q1:defaultValue value="50" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_180103" access="readWrite">
+            <label lang="en">Inhibit time</label>
+            <UINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_180105" access="readWrite">
+            <label lang="en">Event timer</label>
+            <UINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_180106" access="readWrite">
             <label lang="en">SYNC start value</label>
             <USINT />
             <q1:defaultValue value="0" />
@@ -1133,6 +1277,56 @@
             <q1:defaultValue value="0x00000000" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0008" access="readWrite">
+            <label lang="en">Application object 8</label>
+            <UDINT />
+            <q1:defaultValue value="0x00000000" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_1A01">
+            <label lang="en">TPDO mapping parameter</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_1A01" />
+            <q1:property name="CO_storageGroup" value="PERSIST_COMM" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0100" access="readWrite">
+            <label lang="en">Number of mapped application objects in PDO</label>
+            <USINT />
+            <q1:defaultValue value="4" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0101" access="readWrite">
+            <label lang="en">Application object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0x610F0108" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0102" access="readWrite">
+            <label lang="en">Application object 2</label>
+            <UDINT />
+            <q1:defaultValue value="0x610F0208" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0103" access="readWrite">
+            <label lang="en">Application object 3</label>
+            <UDINT />
+            <q1:defaultValue value="0x610F0308" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0104" access="readWrite">
+            <label lang="en">Application object 4</label>
+            <UDINT />
+            <q1:defaultValue value="0x610F0408" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0105" access="readWrite">
+            <label lang="en">Application object 5</label>
+            <UDINT />
+            <q1:defaultValue value="0x00000000" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0106" access="readWrite">
+            <label lang="en">Application object 6</label>
+            <UDINT />
+            <q1:defaultValue value="0x00000000" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0107" access="readWrite">
+            <label lang="en">Application object 7</label>
+            <UDINT />
+            <q1:defaultValue value="0x00000000" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_1A0108" access="readWrite">
             <label lang="en">Application object 8</label>
             <UDINT />
             <q1:defaultValue value="0x00000000" />
@@ -1288,10 +1482,393 @@
             <USINT />
             <q1:defaultValue value="0" />
           </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_610F">
+            <label lang="en">boiler_state</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_610F" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610F00">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x04" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610F01" access="readWriteInput">
+            <label lang="en">mode</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610F02" access="readWriteInput">
+            <label lang="en">tf</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610F03" access="readWriteInput">
+            <label lang="en">tr</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_610F04" access="readWriteInput">
+            <label lang="en">t_hot_water</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6110">
+            <label lang="en">ebus_pkt_raw</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_ARR_6110" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611000">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x10" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611001" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611002" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611003" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611004" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611005" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611006" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611007" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611008" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611009" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61100A" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61100B" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61100C" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61100D" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61100E" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61100F" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611010" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <BITSTRING />
+            <q1:defaultValue value="0" />
+            <q1:property name="CO_stringLengthMin" value="34" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6111">
+            <label lang="en">ebus_err_ph_cnt</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_ARR_6111" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611100">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x0B" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611101" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611102" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611103" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611104" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611105" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611106" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611107" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611108" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611109" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61110A" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61110B" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6112">
+            <label lang="en">ebus_err_pkt_cnt</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_ARR_6112" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611200">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x0F" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611201" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611202" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611203" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611204" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611205" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611206" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611207" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611208" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611209" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61120A" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61120B" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61120C" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61120D" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61120E" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_61120F" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6113">
+            <label lang="en">ebus_err_cnt</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_ARR_6113" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611300">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x06" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611301" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611302" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611303" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611304" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611305" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611306" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_6114">
+            <label lang="en">ebus_ok_cnt</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_ARR_6114" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611400">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x03" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611401" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611402" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_611403" access="readWrite">
+            <label lang="en">Sub Object 1</label>
+            <UDINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
           <q1:parameter uniqueID="UID_OBJ_7000" access="readWriteInput">
             <label lang="en">_obj2</label>
             <UDINT />
             <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_7001">
+            <label lang="en">ebus_setp</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_7001" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_700100">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x03" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_700101" access="readWrite">
+            <label lang="en">mode</label>
+            <USINT />
+            <q1:defaultValue value="0" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_700102" access="readWrite">
+            <label lang="en">flow_temp</label>
+            <USINT />
+            <q1:defaultValue value="50" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_700103" access="readWrite">
+            <label lang="en">hwc_temp</label>
+            <USINT />
+            <q1:defaultValue value="40" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_OBJ_8200">
+            <label lang="en">ebus_cmd</label>
+            <q1:dataTypeIDRef uniqueIDRef="UID_REC_8200" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_820000">
+            <label lang="en">Highest sub-index supported</label>
+            <USINT />
+            <q1:defaultValue value="0x01" />
+          </q1:parameter>
+          <q1:parameter uniqueID="UID_SUB_820001" access="readWrite">
+            <label lang="en">enable</label>
+            <USINT />
+            <q1:defaultValue value="1" />
           </q1:parameter>
         </q1:parameterList>
       </q1:ApplicationProcess>
@@ -1310,7 +1887,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-10-10" fileModificationTime="15:35:24.6600873+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-10-20" fileModificationTime="17:34:12.3479610+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />
@@ -1471,6 +2048,14 @@
             <CANopenSubObject subIndex="05" name="Event timer" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_180005" />
             <CANopenSubObject subIndex="06" name="SYNC start value" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_180006" />
           </CANopenObject>
+          <CANopenObject index="1801" name="TPDO communication parameter" objectType="9" uniqueIDRef="UID_OBJ_1801" subNumber="6">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_180100" />
+            <CANopenSubObject subIndex="01" name="COB-ID used by TPDO" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_180101" />
+            <CANopenSubObject subIndex="02" name="Transmission type" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_180102" />
+            <CANopenSubObject subIndex="03" name="Inhibit time" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_180103" />
+            <CANopenSubObject subIndex="05" name="Event timer" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_180105" />
+            <CANopenSubObject subIndex="06" name="SYNC start value" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_180106" />
+          </CANopenObject>
           <CANopenObject index="1A00" name="TPDO mapping parameter" objectType="9" uniqueIDRef="UID_OBJ_1A00" subNumber="9">
             <CANopenSubObject subIndex="00" name="Number of mapped application objects in PDO" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0000" />
             <CANopenSubObject subIndex="01" name="Application object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0001" />
@@ -1481,6 +2066,17 @@
             <CANopenSubObject subIndex="06" name="Application object 6" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0006" />
             <CANopenSubObject subIndex="07" name="Application object 7" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0007" />
             <CANopenSubObject subIndex="08" name="Application object 8" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0008" />
+          </CANopenObject>
+          <CANopenObject index="1A01" name="TPDO mapping parameter" objectType="9" uniqueIDRef="UID_OBJ_1A01" subNumber="9">
+            <CANopenSubObject subIndex="00" name="Number of mapped application objects in PDO" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0100" />
+            <CANopenSubObject subIndex="01" name="Application object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0101" />
+            <CANopenSubObject subIndex="02" name="Application object 2" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0102" />
+            <CANopenSubObject subIndex="03" name="Application object 3" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0103" />
+            <CANopenSubObject subIndex="04" name="Application object 4" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0104" />
+            <CANopenSubObject subIndex="05" name="Application object 5" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0105" />
+            <CANopenSubObject subIndex="06" name="Application object 6" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0106" />
+            <CANopenSubObject subIndex="07" name="Application object 7" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0107" />
+            <CANopenSubObject subIndex="08" name="Application object 8" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1A0108" />
           </CANopenObject>
           <CANopenObject index="1F50" name="New Firmware" objectType="9" uniqueIDRef="UID_OBJ_1F50" subNumber="2">
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_1F5000" />
@@ -1521,7 +2117,90 @@
             <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610400" />
             <CANopenSubObject subIndex="01" name="pir_state" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610401" />
           </CANopenObject>
+          <CANopenObject index="610F" name="boiler_state" objectType="9" uniqueIDRef="UID_OBJ_610F" subNumber="5">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_610F00" />
+            <CANopenSubObject subIndex="01" name="mode" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610F01" />
+            <CANopenSubObject subIndex="02" name="tf" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610F02" />
+            <CANopenSubObject subIndex="03" name="tr" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610F03" />
+            <CANopenSubObject subIndex="04" name="t_hot_water" objectType="7" PDOmapping="TPDO" uniqueIDRef="UID_SUB_610F04" />
+          </CANopenObject>
+          <CANopenObject index="6110" name="ebus_pkt_raw" objectType="8" uniqueIDRef="UID_OBJ_6110" subNumber="17">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611000" />
+            <CANopenSubObject subIndex="01" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611001" />
+            <CANopenSubObject subIndex="02" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611002" />
+            <CANopenSubObject subIndex="03" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611003" />
+            <CANopenSubObject subIndex="04" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611004" />
+            <CANopenSubObject subIndex="05" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611005" />
+            <CANopenSubObject subIndex="06" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611006" />
+            <CANopenSubObject subIndex="07" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611007" />
+            <CANopenSubObject subIndex="08" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611008" />
+            <CANopenSubObject subIndex="09" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611009" />
+            <CANopenSubObject subIndex="0A" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61100A" />
+            <CANopenSubObject subIndex="0B" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61100B" />
+            <CANopenSubObject subIndex="0C" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61100C" />
+            <CANopenSubObject subIndex="0D" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61100D" />
+            <CANopenSubObject subIndex="0E" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61100E" />
+            <CANopenSubObject subIndex="0F" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61100F" />
+            <CANopenSubObject subIndex="10" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611010" />
+          </CANopenObject>
+          <CANopenObject index="6111" name="ebus_err_ph_cnt" objectType="8" uniqueIDRef="UID_OBJ_6111" subNumber="12">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611100" />
+            <CANopenSubObject subIndex="01" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611101" />
+            <CANopenSubObject subIndex="02" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611102" />
+            <CANopenSubObject subIndex="03" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611103" />
+            <CANopenSubObject subIndex="04" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611104" />
+            <CANopenSubObject subIndex="05" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611105" />
+            <CANopenSubObject subIndex="06" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611106" />
+            <CANopenSubObject subIndex="07" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611107" />
+            <CANopenSubObject subIndex="08" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611108" />
+            <CANopenSubObject subIndex="09" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611109" />
+            <CANopenSubObject subIndex="0A" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61110A" />
+            <CANopenSubObject subIndex="0B" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61110B" />
+          </CANopenObject>
+          <CANopenObject index="6112" name="ebus_err_pkt_cnt" objectType="8" uniqueIDRef="UID_OBJ_6112" subNumber="16">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611200" />
+            <CANopenSubObject subIndex="01" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611201" />
+            <CANopenSubObject subIndex="02" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611202" />
+            <CANopenSubObject subIndex="03" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611203" />
+            <CANopenSubObject subIndex="04" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611204" />
+            <CANopenSubObject subIndex="05" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611205" />
+            <CANopenSubObject subIndex="06" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611206" />
+            <CANopenSubObject subIndex="07" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611207" />
+            <CANopenSubObject subIndex="08" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611208" />
+            <CANopenSubObject subIndex="09" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611209" />
+            <CANopenSubObject subIndex="0A" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61120A" />
+            <CANopenSubObject subIndex="0B" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61120B" />
+            <CANopenSubObject subIndex="0C" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61120C" />
+            <CANopenSubObject subIndex="0D" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61120D" />
+            <CANopenSubObject subIndex="0E" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61120E" />
+            <CANopenSubObject subIndex="0F" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_61120F" />
+          </CANopenObject>
+          <CANopenObject index="6113" name="ebus_err_cnt" objectType="8" uniqueIDRef="UID_OBJ_6113" subNumber="7">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611300" />
+            <CANopenSubObject subIndex="01" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611301" />
+            <CANopenSubObject subIndex="02" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611302" />
+            <CANopenSubObject subIndex="03" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611303" />
+            <CANopenSubObject subIndex="04" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611304" />
+            <CANopenSubObject subIndex="05" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611305" />
+            <CANopenSubObject subIndex="06" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611306" />
+          </CANopenObject>
+          <CANopenObject index="6114" name="ebus_ok_cnt" objectType="8" uniqueIDRef="UID_OBJ_6114" subNumber="4">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611400" />
+            <CANopenSubObject subIndex="01" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611401" />
+            <CANopenSubObject subIndex="02" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611402" />
+            <CANopenSubObject subIndex="03" name="Sub Object 1" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_611403" />
+          </CANopenObject>
           <CANopenObject index="7000" name="_obj2" objectType="7" PDOmapping="RPDO" uniqueIDRef="UID_OBJ_7000" />
+          <CANopenObject index="7001" name="ebus_setp" objectType="9" uniqueIDRef="UID_OBJ_7001" subNumber="4">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_700100" />
+            <CANopenSubObject subIndex="01" name="mode" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_700101" />
+            <CANopenSubObject subIndex="02" name="flow_temp" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_700102" />
+            <CANopenSubObject subIndex="03" name="hwc_temp" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_700103" />
+          </CANopenObject>
+          <CANopenObject index="8200" name="ebus_cmd" objectType="9" uniqueIDRef="UID_OBJ_8200" subNumber="2">
+            <CANopenSubObject subIndex="00" name="Highest sub-index supported" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_820000" />
+            <CANopenSubObject subIndex="01" name="enable" objectType="7" PDOmapping="no" uniqueIDRef="UID_SUB_820001" />
+          </CANopenObject>
         </q2:CANopenObjectList>
         <dummyUsage>
           <dummy entry="Dummy0001=0" />
@@ -1548,7 +2227,7 @@
         </PhysicalLayer>
       </TransportLayers>
       <NetworkManagement>
-        <CANopenGeneralFeatures granularity="8" nrOfRxPDO="1" nrOfTxPDO="1" layerSettingServiceSlave="true" />
+        <CANopenGeneralFeatures granularity="8" nrOfRxPDO="1" nrOfTxPDO="2" layerSettingServiceSlave="true" />
         <CANopenMasterFeatures />
       </NetworkManagement>
     </ProfileBody>

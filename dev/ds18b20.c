@@ -24,7 +24,7 @@ static uint8_t one_wire_crc8(const uint8_t *data, uint8_t len)
 			crc >>= 1;
 			if(mix)
 			{
-				crc ^= 0x8C; // Полином Dallas 1-Wire
+				crc ^= 0x8C;
 			}
 			inbyte >>= 1;
 		}

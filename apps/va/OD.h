@@ -16,7 +16,7 @@
 
         Created:      23.11.2020 14:00:00
         Created By:   
-        Modified:     10.10.2026 15:35:24
+        Modified:     20.10.2026 17:34:12
         Modified By:  
 
     Device Info:
@@ -45,7 +45,7 @@
 #define OD_CNT_SDO_SRV 1
 #define OD_CNT_SDO_CLI 1
 #define OD_CNT_RPDO 1
-#define OD_CNT_TPDO 1
+#define OD_CNT_TPDO 2
 
 
 /*******************************************************************************
@@ -56,6 +56,11 @@
 #define OD_CNT_ARR_1011 4
 #define OD_CNT_ARR_1016 8
 #define OD_CNT_ARR_2000 10
+#define OD_CNT_ARR_6110 16
+#define OD_CNT_ARR_6111 11
+#define OD_CNT_ARR_6112 15
+#define OD_CNT_ARR_6113 6
+#define OD_CNT_ARR_6114 3
 
 
 /*******************************************************************************
@@ -119,6 +124,14 @@ typedef struct {
         uint8_t SYNCStartValue;
     } x1800_TPDOCommunicationParameter;
     struct {
+        uint8_t highestSub_indexSupported;
+        uint32_t COB_IDUsedByTPDO;
+        uint8_t transmissionType;
+        uint16_t inhibitTime;
+        uint16_t eventTimer;
+        uint8_t SYNCStartValue;
+    } x1801_TPDOCommunicationParameter;
+    struct {
         uint8_t numberOfMappedApplicationObjectsInPDO;
         uint32_t applicationObject1;
         uint32_t applicationObject2;
@@ -129,6 +142,17 @@ typedef struct {
         uint32_t applicationObject7;
         uint32_t applicationObject8;
     } x1A00_TPDOMappingParameter;
+    struct {
+        uint8_t numberOfMappedApplicationObjectsInPDO;
+        uint32_t applicationObject1;
+        uint32_t applicationObject2;
+        uint32_t applicationObject3;
+        uint32_t applicationObject4;
+        uint32_t applicationObject5;
+        uint32_t applicationObject6;
+        uint32_t applicationObject7;
+        uint32_t applicationObject8;
+    } x1A01_TPDOMappingParameter;
 } OD_PERSIST_COMM_t;
 
 typedef struct {
@@ -168,7 +192,34 @@ typedef struct {
         uint8_t highestSub_indexSupported;
         uint8_t pir_state;
     } x6104_pir;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint8_t mode;
+        uint8_t tf;
+        uint8_t tr;
+        uint8_t T_hot_water;
+    } x610F_boiler_state;
+    uint8_t x6110_ebus_pkt_raw_sub0;
+    uint8_t x6110_ebus_pkt_raw[OD_CNT_ARR_6110][34];
+    uint8_t x6111_ebus_err_ph_cnt_sub0;
+    uint32_t x6111_ebus_err_ph_cnt[OD_CNT_ARR_6111];
+    uint8_t x6112_ebus_err_pkt_cnt_sub0;
+    uint32_t x6112_ebus_err_pkt_cnt[OD_CNT_ARR_6112];
+    uint8_t x6113_ebus_err_cnt_sub0;
+    uint32_t x6113_ebus_err_cnt[OD_CNT_ARR_6113];
+    uint8_t x6114_ebus_ok_cnt_sub0;
+    uint32_t x6114_ebus_ok_cnt[OD_CNT_ARR_6114];
     uint32_t x7000__obj2;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint8_t mode;
+        uint8_t flow_temp;
+        uint8_t hwc_temp;
+    } x7001_ebus_setp;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint8_t enable;
+    } x8200_ebus_cmd;
 } OD_RAM_t;
 
 #ifndef OD_ATTR_PERSIST_COMM
@@ -213,16 +264,26 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1400 &OD->list[20]
 #define OD_ENTRY_H1600 &OD->list[21]
 #define OD_ENTRY_H1800 &OD->list[22]
-#define OD_ENTRY_H1A00 &OD->list[23]
-#define OD_ENTRY_H1F50 &OD->list[24]
-#define OD_ENTRY_H1F51 &OD->list[25]
-#define OD_ENTRY_H1F56 &OD->list[26]
-#define OD_ENTRY_H1F57 &OD->list[27]
-#define OD_ENTRY_H1F58 &OD->list[28]
-#define OD_ENTRY_H2000 &OD->list[29]
-#define OD_ENTRY_H6103 &OD->list[30]
-#define OD_ENTRY_H6104 &OD->list[31]
-#define OD_ENTRY_H7000 &OD->list[32]
+#define OD_ENTRY_H1801 &OD->list[23]
+#define OD_ENTRY_H1A00 &OD->list[24]
+#define OD_ENTRY_H1A01 &OD->list[25]
+#define OD_ENTRY_H1F50 &OD->list[26]
+#define OD_ENTRY_H1F51 &OD->list[27]
+#define OD_ENTRY_H1F56 &OD->list[28]
+#define OD_ENTRY_H1F57 &OD->list[29]
+#define OD_ENTRY_H1F58 &OD->list[30]
+#define OD_ENTRY_H2000 &OD->list[31]
+#define OD_ENTRY_H6103 &OD->list[32]
+#define OD_ENTRY_H6104 &OD->list[33]
+#define OD_ENTRY_H610F &OD->list[34]
+#define OD_ENTRY_H6110 &OD->list[35]
+#define OD_ENTRY_H6111 &OD->list[36]
+#define OD_ENTRY_H6112 &OD->list[37]
+#define OD_ENTRY_H6113 &OD->list[38]
+#define OD_ENTRY_H6114 &OD->list[39]
+#define OD_ENTRY_H7000 &OD->list[40]
+#define OD_ENTRY_H7001 &OD->list[41]
+#define OD_ENTRY_H8200 &OD->list[42]
 
 
 /*******************************************************************************
@@ -251,16 +312,26 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1400_RPDOCommunicationParameter &OD->list[20]
 #define OD_ENTRY_H1600_RPDOMappingParameter &OD->list[21]
 #define OD_ENTRY_H1800_TPDOCommunicationParameter &OD->list[22]
-#define OD_ENTRY_H1A00_TPDOMappingParameter &OD->list[23]
-#define OD_ENTRY_H1F50_newFirmware &OD->list[24]
-#define OD_ENTRY_H1F51_programControl &OD->list[25]
-#define OD_ENTRY_H1F56_appSoftIdentification &OD->list[26]
-#define OD_ENTRY_H1F57_flashStatusIdentification &OD->list[27]
-#define OD_ENTRY_H1F58_prod_id &OD->list[28]
-#define OD_ENTRY_H2000_errorBits &OD->list[29]
-#define OD_ENTRY_H6103_aht21 &OD->list[30]
-#define OD_ENTRY_H6104_pir &OD->list[31]
-#define OD_ENTRY_H7000__obj2 &OD->list[32]
+#define OD_ENTRY_H1801_TPDOCommunicationParameter &OD->list[23]
+#define OD_ENTRY_H1A00_TPDOMappingParameter &OD->list[24]
+#define OD_ENTRY_H1A01_TPDOMappingParameter &OD->list[25]
+#define OD_ENTRY_H1F50_newFirmware &OD->list[26]
+#define OD_ENTRY_H1F51_programControl &OD->list[27]
+#define OD_ENTRY_H1F56_appSoftIdentification &OD->list[28]
+#define OD_ENTRY_H1F57_flashStatusIdentification &OD->list[29]
+#define OD_ENTRY_H1F58_prod_id &OD->list[30]
+#define OD_ENTRY_H2000_errorBits &OD->list[31]
+#define OD_ENTRY_H6103_aht21 &OD->list[32]
+#define OD_ENTRY_H6104_pir &OD->list[33]
+#define OD_ENTRY_H610F_boiler_state &OD->list[34]
+#define OD_ENTRY_H6110_ebus_pkt_raw &OD->list[35]
+#define OD_ENTRY_H6111_ebus_err_ph_cnt &OD->list[36]
+#define OD_ENTRY_H6112_ebus_err_pkt_cnt &OD->list[37]
+#define OD_ENTRY_H6113_ebus_err_cnt &OD->list[38]
+#define OD_ENTRY_H6114_ebus_ok_cnt &OD->list[39]
+#define OD_ENTRY_H7000__obj2 &OD->list[40]
+#define OD_ENTRY_H7001_ebus_setp &OD->list[41]
+#define OD_ENTRY_H8200_ebus_cmd &OD->list[42]
 
 
 /*******************************************************************************
