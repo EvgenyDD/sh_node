@@ -570,9 +570,9 @@ void ebus_poll(uint32_t diff_ms)
 			switch(active_pkt_idx)
 			{
 			case 0:														// status01
-				OD_RAM.x610F_boiler_state.T_hot_water = rx_pkt.data[0]; // scale 0.5
+				OD_RAM.x610F_boiler_state.tr = rx_pkt.data[0];			// scale 0.5
 				OD_RAM.x610F_boiler_state.tf = rx_pkt.data[1];			// scale 0.5
-				OD_RAM.x610F_boiler_state.tr = rx_pkt.data[5];			// scale 0.5
+				OD_RAM.x610F_boiler_state.T_hot_water = rx_pkt.data[5]; // scale 0.5
 				break;
 			case 1: // status02
 				break;
