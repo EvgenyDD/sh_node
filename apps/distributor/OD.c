@@ -102,11 +102,11 @@ OD_ATTR_PERSIST_COMM OD_PERSIST_COMM_t OD_PERSIST_COMM = {
         .SYNCStartValue = 0x00
     },
     .x1A00_TPDOMappingParameter = {
-        .numberOfMappedApplicationObjectsInPDO = 0x03,
+        .numberOfMappedApplicationObjectsInPDO = 0x04,
         .applicationObject1 = 0x61020110,
         .applicationObject2 = 0x61020210,
         .applicationObject3 = 0x61020310,
-        .applicationObject4 = 0x00000000,
+        .applicationObject4 = 0x61020410,
         .applicationObject5 = 0x00000000,
         .applicationObject6 = 0x00000000,
         .applicationObject7 = 0x00000000,

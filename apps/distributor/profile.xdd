@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-11-06" fileModificationTime="20:22:17.0530020+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModifiedBy="" fileModificationDate="2026-11-22" fileModificationTime="21:12:10.9195710+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Home</q1:vendorName>
         <q1:vendorID></q1:vendorID>
@@ -1394,7 +1394,7 @@
           <q1:parameter uniqueID="UID_SUB_1A0000" access="readWrite">
             <label lang="en">Number of mapped application objects in PDO</label>
             <USINT />
-            <q1:defaultValue value="3" />
+            <q1:defaultValue value="4" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0001" access="readWrite">
             <label lang="en">Application object 1</label>
@@ -1414,7 +1414,7 @@
           <q1:parameter uniqueID="UID_SUB_1A0004" access="readWrite">
             <label lang="en">Application object 4</label>
             <UDINT />
-            <q1:defaultValue value="0x00000000" />
+            <q1:defaultValue value="0x61020410" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0005" access="readWrite">
             <label lang="en">Application object 5</label>
@@ -2049,7 +2049,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-11-06" fileModificationTime="20:22:17.0530020+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="profile.xdd" fileCreator="" fileCreationDate="2020-11-23" fileCreationTime="14:00:00.0000000+03:00" fileModificationDate="2026-11-22" fileModificationTime="21:12:10.9195710+03:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />
