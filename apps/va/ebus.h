@@ -1,5 +1,5 @@
-#ifndef GPS_H__
-#define GPS_H__
+#ifndef EBUS_H__
+#define EBUS_H__
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -39,4 +39,4 @@ void ebus_set_heat_mode(uint8_t hc_mode, bool disable_hc, bool disable_hwc);
 
 extern volatile boiler_t boiler;
 
-#endif // GPS_H__
+#endif // EBUS_H__

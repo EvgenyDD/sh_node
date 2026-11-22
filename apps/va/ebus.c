@@ -55,12 +55,6 @@ static void _printf(const char *fmt, ...)
 #define CMD_STATUS02 2
 
 #define RX_FIFO_SIZE 64
-static struct
-{
-	volatile uint8_t data[RX_FIFO_SIZE];
-	volatile uint32_t head;
-	volatile uint32_t tail;
-} rx_fifo = {0};
 
 static volatile bool tx_complete_flag = false;
 
@@ -112,15 +106,19 @@ static const uint32_t ph_to[PH_CNT] = {
 	0,	 // PH_TX_RESP
 };
 
-volatile boiler_t boiler = {0};
+static struct
+{
+	volatile uint8_t data[RX_FIFO_SIZE];
+	volatile uint32_t head;
+	volatile uint32_t tail;
+} rx_fifo = {0};
 
-static volatile uint8_t rx_buf[256] = {0};
-static volatile uint32_t rx_buf_ptr = 0, pkt_pend_size = 0;
+volatile boiler_t boiler = {0};
 
 static volatile uint8_t tx_buf[256] = {0}, tx_buf_resp[2] = {ACK, SYN}, tx_buf_resp_cmd[3] = {0, 0, 0};
 
 static volatile uint8_t *p_tx_buf = NULL;
-static volatile uint32_t tx_size = 0;
+static volatile uint32_t tx_size = 0, pkt_pend_size = 0;
 
 #define MAX_SLAVE_DATA_LEN 25
 #define MAX_MASTER_CMD_LEN 32
@@ -157,8 +155,6 @@ static void ebus_parser_init(void)
 static void uart_tx_dma(const volatile uint8_t *data, uint32_t len)
 {
 	if(len == 0) return;
-
-	USART_ITConfig(USART1, USART_IT_RXNE, DISABLE);
 
 	DMA_Cmd(DMA1_Channel4, DISABLE);
 	DMA1_Channel4->CMAR = (uint32_t)data;
@@ -742,7 +738,6 @@ void USART1_IRQHandler(void)
 		(void)dummy;
 		USART_ClearFlag(USART1, USART_FLAG_RXNE);
 
-		USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 		tx_complete_flag = true;
 	}
 

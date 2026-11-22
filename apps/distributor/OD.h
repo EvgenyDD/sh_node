@@ -16,7 +16,7 @@
 
         Created:      23.11.2020 14:00:00
         Created By:   
-        Modified:     10.10.2026 20:57:02
+        Modified:     06.11.2026 20:22:17
         Modified By:  
 
     Device Info:
@@ -45,7 +45,7 @@
 #define OD_CNT_SDO_SRV 1
 #define OD_CNT_SDO_CLI 1
 #define OD_CNT_RPDO 1
-#define OD_CNT_TPDO 3
+#define OD_CNT_TPDO 4
 
 
 /*******************************************************************************
@@ -139,6 +139,14 @@ typedef struct {
         uint8_t SYNCStartValue;
     } x1802_TPDOCommunicationParameter;
     struct {
+        uint8_t highestSub_indexSupported;
+        uint32_t COB_IDUsedByTPDO;
+        uint8_t transmissionType;
+        uint16_t inhibitTime;
+        uint16_t eventTimer;
+        uint8_t SYNCStartValue;
+    } x1803_TPDOCommunicationParameter;
+    struct {
         uint8_t numberOfMappedApplicationObjectsInPDO;
         uint32_t applicationObject1;
         uint32_t applicationObject2;
@@ -171,6 +179,17 @@ typedef struct {
         uint32_t applicationObject7;
         uint32_t applicationObject8;
     } x1A02_TPDOMappingParameter;
+    struct {
+        uint8_t numberOfMappedApplicationObjectsInPDO;
+        uint32_t applicationObject1;
+        uint32_t applicationObject2;
+        uint32_t applicationObject3;
+        uint32_t applicationObject4;
+        uint32_t applicationObject5;
+        uint32_t applicationObject6;
+        uint32_t applicationObject7;
+        uint32_t applicationObject8;
+    } x1A03_TPDOMappingParameter;
 } OD_PERSIST_COMM_t;
 
 typedef struct {
@@ -216,6 +235,13 @@ typedef struct {
     uint16_t x6105_tacho[OD_CNT_ARR_6105];
     uint8_t x6106_tacho_acc_sub0;
     uint16_t x6106_tacho_acc[OD_CNT_ARR_6106];
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint8_t status;
+        uint16_t tvoc;
+        uint16_t eco2;
+        uint8_t aqi;
+    } x6108_ens160;
     uint32_t x7000__obj2;
     struct {
         uint8_t highestSub_indexSupported;
@@ -270,23 +296,26 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1800 &OD->list[22]
 #define OD_ENTRY_H1801 &OD->list[23]
 #define OD_ENTRY_H1802 &OD->list[24]
-#define OD_ENTRY_H1A00 &OD->list[25]
-#define OD_ENTRY_H1A01 &OD->list[26]
-#define OD_ENTRY_H1A02 &OD->list[27]
-#define OD_ENTRY_H1F50 &OD->list[28]
-#define OD_ENTRY_H1F51 &OD->list[29]
-#define OD_ENTRY_H1F56 &OD->list[30]
-#define OD_ENTRY_H1F57 &OD->list[31]
-#define OD_ENTRY_H1F58 &OD->list[32]
-#define OD_ENTRY_H2000 &OD->list[33]
-#define OD_ENTRY_H6102 &OD->list[34]
-#define OD_ENTRY_H6103 &OD->list[35]
-#define OD_ENTRY_H6104 &OD->list[36]
-#define OD_ENTRY_H6105 &OD->list[37]
-#define OD_ENTRY_H6106 &OD->list[38]
-#define OD_ENTRY_H7000 &OD->list[39]
-#define OD_ENTRY_H8101 &OD->list[40]
-#define OD_ENTRY_H8102 &OD->list[41]
+#define OD_ENTRY_H1803 &OD->list[25]
+#define OD_ENTRY_H1A00 &OD->list[26]
+#define OD_ENTRY_H1A01 &OD->list[27]
+#define OD_ENTRY_H1A02 &OD->list[28]
+#define OD_ENTRY_H1A03 &OD->list[29]
+#define OD_ENTRY_H1F50 &OD->list[30]
+#define OD_ENTRY_H1F51 &OD->list[31]
+#define OD_ENTRY_H1F56 &OD->list[32]
+#define OD_ENTRY_H1F57 &OD->list[33]
+#define OD_ENTRY_H1F58 &OD->list[34]
+#define OD_ENTRY_H2000 &OD->list[35]
+#define OD_ENTRY_H6102 &OD->list[36]
+#define OD_ENTRY_H6103 &OD->list[37]
+#define OD_ENTRY_H6104 &OD->list[38]
+#define OD_ENTRY_H6105 &OD->list[39]
+#define OD_ENTRY_H6106 &OD->list[40]
+#define OD_ENTRY_H6108 &OD->list[41]
+#define OD_ENTRY_H7000 &OD->list[42]
+#define OD_ENTRY_H8101 &OD->list[43]
+#define OD_ENTRY_H8102 &OD->list[44]
 
 
 /*******************************************************************************
@@ -317,23 +346,26 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H1800_TPDOCommunicationParameter &OD->list[22]
 #define OD_ENTRY_H1801_TPDOCommunicationParameter &OD->list[23]
 #define OD_ENTRY_H1802_TPDOCommunicationParameter &OD->list[24]
-#define OD_ENTRY_H1A00_TPDOMappingParameter &OD->list[25]
-#define OD_ENTRY_H1A01_TPDOMappingParameter &OD->list[26]
-#define OD_ENTRY_H1A02_TPDOMappingParameter &OD->list[27]
-#define OD_ENTRY_H1F50_newFirmware &OD->list[28]
-#define OD_ENTRY_H1F51_programControl &OD->list[29]
-#define OD_ENTRY_H1F56_appSoftIdentification &OD->list[30]
-#define OD_ENTRY_H1F57_flashStatusIdentification &OD->list[31]
-#define OD_ENTRY_H1F58_prod_id &OD->list[32]
-#define OD_ENTRY_H2000_errorBits &OD->list[33]
-#define OD_ENTRY_H6102_ds18b20 &OD->list[34]
-#define OD_ENTRY_H6103_aht21 &OD->list[35]
-#define OD_ENTRY_H6104_pir &OD->list[36]
-#define OD_ENTRY_H6105_tacho &OD->list[37]
-#define OD_ENTRY_H6106_tacho_acc &OD->list[38]
-#define OD_ENTRY_H7000__obj2 &OD->list[39]
-#define OD_ENTRY_H8101_ds18b20_cmd &OD->list[40]
-#define OD_ENTRY_H8102_ds18b20_cfg &OD->list[41]
+#define OD_ENTRY_H1803_TPDOCommunicationParameter &OD->list[25]
+#define OD_ENTRY_H1A00_TPDOMappingParameter &OD->list[26]
+#define OD_ENTRY_H1A01_TPDOMappingParameter &OD->list[27]
+#define OD_ENTRY_H1A02_TPDOMappingParameter &OD->list[28]
+#define OD_ENTRY_H1A03_TPDOMappingParameter &OD->list[29]
+#define OD_ENTRY_H1F50_newFirmware &OD->list[30]
+#define OD_ENTRY_H1F51_programControl &OD->list[31]
+#define OD_ENTRY_H1F56_appSoftIdentification &OD->list[32]
+#define OD_ENTRY_H1F57_flashStatusIdentification &OD->list[33]
+#define OD_ENTRY_H1F58_prod_id &OD->list[34]
+#define OD_ENTRY_H2000_errorBits &OD->list[35]
+#define OD_ENTRY_H6102_ds18b20 &OD->list[36]
+#define OD_ENTRY_H6103_aht21 &OD->list[37]
+#define OD_ENTRY_H6104_pir &OD->list[38]
+#define OD_ENTRY_H6105_tacho &OD->list[39]
+#define OD_ENTRY_H6106_tacho_acc &OD->list[40]
+#define OD_ENTRY_H6108_ens160 &OD->list[41]
+#define OD_ENTRY_H7000__obj2 &OD->list[42]
+#define OD_ENTRY_H8101_ds18b20_cmd &OD->list[43]
+#define OD_ENTRY_H8102_ds18b20_cfg &OD->list[44]
 
 
 /*******************************************************************************

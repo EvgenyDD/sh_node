@@ -130,6 +130,13 @@ OD_ATTR_RAM OD_RAM_t OD_RAM = {
         .temp = 0,
         .hum = 0
     },
+    .x6108_ens160 = {
+        .highestSub_indexSupported = 0x04,
+        .status = 0x00,
+        .tvoc = 0x0000,
+        .eco2 = 0x0000,
+        .aqi = 0x00
+    },
     .x7000__obj2 = 0x00000000,
     .x8101_ds18b20_cmd = {
         .highestSub_indexSupported = 0x02,
@@ -179,6 +186,7 @@ typedef struct {
     OD_obj_record_t o_6101_baro[3];
     OD_obj_array_t o_6102_ds18b20;
     OD_obj_record_t o_6103_aht21[3];
+    OD_obj_record_t o_6108_ens160[5];
     OD_obj_var_t o_7000__obj2;
     OD_obj_record_t o_8101_ds18b20_cmd[3];
     OD_obj_array_t o_8102_ds18b20_cfg;
@@ -677,6 +685,38 @@ static CO_PROGMEM ODObjs_t ODObjs = {
             .dataLength = 4
         }
     },
+    .o_6108_ens160 = {
+        {
+            .dataOrig = &OD_RAM.x6108_ens160.highestSub_indexSupported,
+            .subIndex = 0,
+            .attribute = ODA_SDO_R,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6108_ens160.status,
+            .subIndex = 1,
+            .attribute = ODA_SDO_R,
+            .dataLength = 1
+        },
+        {
+            .dataOrig = &OD_RAM.x6108_ens160.tvoc,
+            .subIndex = 2,
+            .attribute = ODA_SDO_R | ODA_TPDO | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6108_ens160.eco2,
+            .subIndex = 3,
+            .attribute = ODA_SDO_R | ODA_TPDO | ODA_MB,
+            .dataLength = 2
+        },
+        {
+            .dataOrig = &OD_RAM.x6108_ens160.aqi,
+            .subIndex = 4,
+            .attribute = ODA_SDO_R | ODA_TPDO,
+            .dataLength = 1
+        }
+    },
     .o_7000__obj2 = {
         .dataOrig = &OD_RAM.x7000__obj2,
         .attribute = ODA_SDO_RW | ODA_RPDO | ODA_MB,
@@ -750,6 +790,7 @@ static OD_ATTR_OD OD_entry_t ODList[] = {
     {0x6101, 0x03, ODT_REC, &ODObjs.o_6101_baro, NULL},
     {0x6102, 0x11, ODT_ARR, &ODObjs.o_6102_ds18b20, NULL},
     {0x6103, 0x03, ODT_REC, &ODObjs.o_6103_aht21, NULL},
+    {0x6108, 0x05, ODT_REC, &ODObjs.o_6108_ens160, NULL},
     {0x7000, 0x01, ODT_VAR, &ODObjs.o_7000__obj2, NULL},
     {0x8101, 0x03, ODT_REC, &ODObjs.o_8101_ds18b20_cmd, NULL},
     {0x8102, 0x11, ODT_ARR, &ODObjs.o_8102_ds18b20_cfg, NULL},

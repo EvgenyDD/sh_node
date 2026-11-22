@@ -9,5 +9,6 @@
 #define CFG_USE_TACHO2
 // #define CFG_USE_TACHO3
 #define CFG_USE_PIR
+#define CFG_USE_ENS160
 
 #endif // CFG_DEVICE_H__

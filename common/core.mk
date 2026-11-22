@@ -111,7 +111,7 @@ UPDIR:=_updir_
 
 EXT_OBJECTS+=$(FOREIGN_MAKE_TARGETS)
 
-SELFDEP +=Makefile
+SELFDEP +=MakefileApp
 
 #######################################
 # C/C++ flags tuning

@@ -1,4 +1,5 @@
 #include "app_common.h"
+#include <stdio.h>
 
 CONFIG_GENERIC_INIT();
 
@@ -27,28 +28,50 @@ void main(void)
 	baro_init();
 	adc_init();
 	aht21_init();
+	ens160_init();
+	tm1637_init();
 	ds18b20_init(9600);
 
-	static uint32_t c = 0;
+	tm1637_brightness(7);
+	tm1637_str("1234");
 
 	for(;;)
 	{
 		CAN_LOOP_PRE()
 		{
-			// GENERIC_LED_FLASH();
-			static uint32_t led_tim = 0;
-			led_tim += diff_ms;
-			if(led_tim >= 500) led_tim = 0;
-			// PIN_WR_(GPIOD, 1, led_tim < (PIN_GET_(GPIOB, 12) ? 400 : 5));
-			// PIN_WR_(GPIOD, 1, led_tim < (c > 5 ? 400 : 5));
-
-			if(!PIN_GET_(GPIOB, 10)) c++;
+			GENERIC_LED_FLASH();
 
 			if(adc_track())
 			{
 			}
+
 			if(aht21.exist) aht21_poll(diff_ms);
+			if(ens160.exist) ens160_poll(diff_ms);
 			ds18b20_poll(diff_ms);
+
+			static uint32_t c = 0;
+			c += diff_ms;
+			if(c >= 100000) c = 0;
+
+			static uint32_t p = 0;
+			p += diff_ms;
+
+			static uint32_t upd_c = 0;
+			upd_c += diff_ms;
+			if(upd_c >= 40)
+			{
+				static uint32_t b = 0;
+				b++;
+
+				upd_c = 0;
+				char txt[5] = {0};
+				tm1637_brightness((b % 120) / 15);
+
+				sprintf(txt, "%04ld", c / 10);
+				if(p >= 4000) p = 0;
+				txt[p / 1000] = '.';
+				tm1637_str(txt);
+			}
 		}
 		CAN_LOOP_POST()
 	}

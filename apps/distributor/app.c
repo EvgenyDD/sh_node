@@ -33,6 +33,7 @@ void main(void)
 	spi_common_init();
 	adc_init();
 	aht21_init();
+	ens160_init();
 	ds18b20_init(9600);
 	tacho_init();
 	pir_init();
@@ -53,6 +54,7 @@ void main(void)
 
 			adc_track();
 			if(aht21.exist) aht21_poll(diff_ms);
+			if(ens160.exist) ens160_poll(diff_ms);
 			ds18b20_poll(diff_ms);
 			tacho_poll(diff_ms);
 			pir_poll(diff_ms, 2);

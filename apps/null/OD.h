@@ -16,7 +16,7 @@
 
         Created:      23.11.2020 14:00:00
         Created By:   
-        Modified:     08.10.2026 14:38:13
+        Modified:     09.11.2026 23:43:26
         Modified By:  
 
     Device Info:
@@ -173,6 +173,13 @@ typedef struct {
         int32_t temp;
         int32_t hum;
     } x6103_aht21;
+    struct {
+        uint8_t highestSub_indexSupported;
+        uint8_t status;
+        uint16_t tvoc;
+        uint16_t eco2;
+        uint8_t aqi;
+    } x6108_ens160;
     uint32_t x7000__obj2;
     struct {
         uint8_t highestSub_indexSupported;
@@ -235,9 +242,10 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H6101 &OD->list[30]
 #define OD_ENTRY_H6102 &OD->list[31]
 #define OD_ENTRY_H6103 &OD->list[32]
-#define OD_ENTRY_H7000 &OD->list[33]
-#define OD_ENTRY_H8101 &OD->list[34]
-#define OD_ENTRY_H8102 &OD->list[35]
+#define OD_ENTRY_H6108 &OD->list[33]
+#define OD_ENTRY_H7000 &OD->list[34]
+#define OD_ENTRY_H8101 &OD->list[35]
+#define OD_ENTRY_H8102 &OD->list[36]
 
 
 /*******************************************************************************
@@ -276,9 +284,10 @@ extern OD_ATTR_OD OD_t *OD;
 #define OD_ENTRY_H6101_baro &OD->list[30]
 #define OD_ENTRY_H6102_ds18b20 &OD->list[31]
 #define OD_ENTRY_H6103_aht21 &OD->list[32]
-#define OD_ENTRY_H7000__obj2 &OD->list[33]
-#define OD_ENTRY_H8101_ds18b20_cmd &OD->list[34]
-#define OD_ENTRY_H8102_ds18b20_cfg &OD->list[35]
+#define OD_ENTRY_H6108_ens160 &OD->list[33]
+#define OD_ENTRY_H7000__obj2 &OD->list[34]
+#define OD_ENTRY_H8101_ds18b20_cmd &OD->list[35]
+#define OD_ENTRY_H8102_ds18b20_cfg &OD->list[36]
 
 
 /*******************************************************************************

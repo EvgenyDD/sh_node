@@ -18,6 +18,11 @@ $(SUBDIRS):
 		-e APP_TYPE=$$(basename $@)\
 		$(EXTRA_ARGS)
 
+null:
+	@make -f MakefileApp --no-print-directory\
+		-e APP_PATH=apps/null\
+		-e APP_TYPE=null
+
 flash_null:
 	@make -f MakefileApp --no-print-directory\
 		-e APP_PATH=apps/null\
@@ -30,8 +35,22 @@ flash_street_sns:
 		-e APP_TYPE=street_sns\
 		flash_all
 
-# EXECUTABLE=build/sh_nd_null/sh_nd
-EXECUTABLE=build/sh_nd_street_sns/sh_nd
+gates:
+	@make -f MakefileApp --no-print-directory\
+		-e APP_PATH=apps/gates\
+		-e APP_TYPE=gates
+
+flash_gates:
+	@make -f MakefileApp --no-print-directory\
+		-e APP_PATH=apps/gates\
+		-e APP_TYPE=gates\
+		flash_all
+
+program_gates: build/sh_nd_gates/sh_nd_gates_signed.bin
+	@canopen_flasher w a $< 80 SH_ND
+
+EXECUTABLE=build/sh_nd_null/sh_nd
+# EXECUTABLE=build/sh_nd_street_sns/sh_nd
 
 debug:
 	@set _NO_DEBUG_HEAP=1

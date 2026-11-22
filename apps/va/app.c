@@ -1,8 +1,6 @@
 #include "app_common.h"
 #include "ebus.h"
 
-volatile uint8_t trig = 0;
-
 CONFIG_GENERIC_INIT();
 
 void main(void)
