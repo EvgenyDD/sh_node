@@ -161,7 +161,8 @@ void platform_deinit(void)
 	SysTick->CTRL = 0;
 	for(uint32_t i = 0; i < sizeof(NVIC->ICPR) / sizeof(NVIC->ICPR[0]); i++)
 	{
-		NVIC->ICPR[i] = 0xfffffffflu;
+		NVIC->ICPR[i] = 0xFFFFFFFFlu;
+		NVIC->ICER[i] = 0xFFFFFFFFlu;
 	}
 	__enable_irq();
 }
